@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const PORT = process.env.PORT || 3001;
+const db = require('./models');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 //static file declaration
@@ -21,7 +22,9 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname + '/client/public/index.html'));
 });
 
-//use routes when made and connect to mongoose
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+//use routes when made and connect to mysql
+db.sequelize.sync({ force: true }).then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
+  });
 });
