@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
+import Register from '../register/registerform';
 import './App.css';
 
 class App extends React.Component {
@@ -7,7 +8,8 @@ class App extends React.Component {
     return (
       <Router>
         <div>
-          <Route exact path="/" component={Other} />
+          <Route exact path="/" component={Register} />
+          <Route exact path="/test" component={Other} />
         </div>
       </Router>
     );
