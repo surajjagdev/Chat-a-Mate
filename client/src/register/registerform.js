@@ -1,6 +1,9 @@
 import React from 'react';
+import './registerForm.css';
 class Register extends React.Component {
   state = {
+    userName: '',
+    userPassword: '',
     firstName: '',
     lastName: '',
     email: '',
@@ -17,50 +20,89 @@ class Register extends React.Component {
       );
     });
   };
+  signIn = e => {
+    e.preventDefault();
+    console.log(
+      `userName: ${this.state.userName}\n userPassword: ${
+        this.state.userPassword
+      }`
+    );
+  };
 
   render() {
     return (
-      <div>
-        <h1>Register Form</h1>
-        <div className="name">
-          <label>First Name</label>
+      <div className="homePage">
+        <div className="existingUserForm">
           <input
-            className="firstNameField"
+            className="userName"
             type="text"
-            name="firstName"
+            placeholder="Email"
+            name="userName"
             onChange={e => {
               this.handleInput(e);
             }}
           />
-          <label>Last Name</label>
           <input
-            className="lastNameField"
+            className="userPassword"
             type="text"
-            name="lastName"
+            placeholder="Password"
+            name="userPassword"
             onChange={e => {
               this.handleInput(e);
             }}
           />
+          <button
+            className="signIn"
+            onClick={e => {
+              this.signIn(e);
+            }}
+          >
+            Log In
+          </button>
         </div>
-        <div className="emailPass">
-          <label>Email</label>
-          <input
-            className="emailField"
-            type="text"
-            name="email"
-            onChange={e => {
-              this.handleInput(e);
-            }}
-          />
-          <label>Password</label>
-          <input
-            className="passwordField"
-            type="text"
-            name="password"
-            onChange={e => {
-              this.handleInput(e);
-            }}
-          />
+        <div className="newUserForm">
+          <h1 className="newUserFormHeader1">Don't Have an Account</h1>
+          <h3 className="newUserFormHeader3">Create One</h3>
+          <div className="name">
+            <input
+              className="firstNameField"
+              type="text"
+              placeholder="First Name"
+              name="firstName"
+              onChange={e => {
+                this.handleInput(e);
+              }}
+            />
+            <input
+              className="lastNameField"
+              type="text"
+              placeholder="Last Name"
+              name="lastName"
+              onChange={e => {
+                this.handleInput(e);
+              }}
+            />
+          </div>
+          <div className="emailPass">
+            <input
+              className="emailField"
+              type="text"
+              placeholder="Email"
+              name="email"
+              onChange={e => {
+                this.handleInput(e);
+              }}
+            />
+            <input
+              className="passwordField"
+              type="text"
+              placeholder="Password"
+              name="password"
+              onChange={e => {
+                this.handleInput(e);
+              }}
+            />
+          </div>
         </div>
       </div>
     );

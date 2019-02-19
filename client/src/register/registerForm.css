@@ -1,0 +1,147 @@
+html,
+body {
+  height: 100%;
+  width: 100%;
+  background: rgba(242, 246, 248, 1);
+  background: -moz-linear-gradient(
+    left,
+    rgba(242, 246, 248, 1) 0%,
+    rgba(216, 225, 231, 1) 2%,
+    rgba(181, 198, 208, 1) 98%,
+    rgba(224, 239, 249, 1) 100%
+  );
+  background: -webkit-gradient(
+    left top,
+    right top,
+    color-stop(0%, rgba(242, 246, 248, 1)),
+    color-stop(2%, rgba(216, 225, 231, 1)),
+    color-stop(98%, rgba(181, 198, 208, 1)),
+    color-stop(100%, rgba(224, 239, 249, 1))
+  );
+  background: -webkit-linear-gradient(
+    left,
+    rgba(242, 246, 248, 1) 0%,
+    rgba(216, 225, 231, 1) 2%,
+    rgba(181, 198, 208, 1) 98%,
+    rgba(224, 239, 249, 1) 100%
+  );
+  background: -o-linear-gradient(
+    left,
+    rgba(242, 246, 248, 1) 0%,
+    rgba(216, 225, 231, 1) 2%,
+    rgba(181, 198, 208, 1) 98%,
+    rgba(224, 239, 249, 1) 100%
+  );
+  background: -ms-linear-gradient(
+    left,
+    rgba(242, 246, 248, 1) 0%,
+    rgba(216, 225, 231, 1) 2%,
+    rgba(181, 198, 208, 1) 98%,
+    rgba(224, 239, 249, 1) 100%
+  );
+  background: linear-gradient(
+    to right,
+    rgba(242, 246, 248, 1) 0%,
+    rgba(216, 225, 231, 1) 2%,
+    rgba(181, 198, 208, 1) 98%,
+    rgba(224, 239, 249, 1) 100%
+  );
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f6f8', endColorstr='#e0eff9', GradientType=1 );
+}
+
+.newUserForm {
+  position: absolute;
+  top: 40%;
+  left: 34%;
+  display: grid;
+  grid-template-areas: 1fr 1fr;
+  border: solid 1px blue;
+  width: 500px;
+  height: 200px;
+  text-align: center;
+  z-index: 100;
+  background-color: white;
+}
+.newUserFormHeader3 {
+  margin-top: -10px;
+}
+.firstNameField,
+.emailField {
+  margin-right: 1px;
+  border: 1px solid black;
+}
+.lastNameField,
+.passwordField {
+  margin-left: 1px;
+  border: 1px solid black;
+}
+.existingUserForm {
+  border: 1px solid blue;
+  z-index: 100;
+  width: 100%;
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  background: rgba(16, 76, 132, 1);
+  background: -moz-linear-gradient(
+    left,
+    rgba(16, 76, 132, 1) 0%,
+    rgba(13, 58, 110, 1) 70%,
+    rgba(13, 58, 110, 1) 84%
+  );
+  background: -webkit-gradient(
+    left top,
+    right top,
+    color-stop(0%, rgba(16, 76, 132, 1)),
+    color-stop(70%, rgba(13, 58, 110, 1)),
+    color-stop(84%, rgba(13, 58, 110, 1))
+  );
+  background: -webkit-linear-gradient(
+    left,
+    rgba(16, 76, 132, 1) 0%,
+    rgba(13, 58, 110, 1) 70%,
+    rgba(13, 58, 110, 1) 84%
+  );
+  background: -o-linear-gradient(
+    left,
+    rgba(16, 76, 132, 1) 0%,
+    rgba(13, 58, 110, 1) 70%,
+    rgba(13, 58, 110, 1) 84%
+  );
+  background: -ms-linear-gradient(
+    left,
+    rgba(16, 76, 132, 1) 0%,
+    rgba(13, 58, 110, 1) 70%,
+    rgba(13, 58, 110, 1) 84%
+  );
+  background: linear-gradient(
+    to right,
+    rgba(16, 76, 132, 1) 0%,
+    rgba(13, 58, 110, 1) 70%,
+    rgba(13, 58, 110, 1) 84%
+  );
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#104c84', endColorstr='#0d3a6e', GradientType=1 );
+}
+.userName {
+  position: absolute;
+  top: 20px;
+  width: 12%;
+  height: 5%;
+  margin-left: -120px;
+}
+.userPassword {
+  position: absolute;
+  top: 20px;
+  width: 12%;
+  height: 5%;
+  margin-left: 100px;
+}
+.signIn {
+  position: absolute;
+  height: 27px;
+  top: 21px;
+  margin-left: 245px;
+  background-color: rgba(16, 76, 132, 1);
+  color: white;
+  border: 1px solid black;
+}
