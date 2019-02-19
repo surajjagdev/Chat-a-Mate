@@ -1,4 +1,5 @@
 import React from 'react';
+import Logo from '../logo/logo.js';
 import './registerForm.css';
 class Register extends React.Component {
   state = {
@@ -33,6 +34,8 @@ class Register extends React.Component {
     return (
       <div className="homePage">
         <div className="existingUserForm">
+          <Logo />
+          <h1 className="existingUserFormHeader">Chat-a-Mate</h1>
           <input
             className="userName"
             type="text"

@@ -57,13 +57,19 @@ body {
   grid-template-areas: 1fr 1fr;
   border: solid 1px blue;
   width: 500px;
-  height: 200px;
+  height: 210px;
+  margin-bottom: 20px;
   text-align: center;
   z-index: 100;
   background-color: white;
 }
 .newUserFormHeader3 {
   margin-top: -10px;
+}
+.existingUserFormHeader {
+  position: absolute;
+  left: 150px;
+  top: -5px;
 }
 .firstNameField,
 .emailField {
@@ -139,7 +145,7 @@ body {
 .signIn {
   position: absolute;
   height: 27px;
-  top: 21px;
+  top: 25px;
   margin-left: 245px;
   background-color: rgba(16, 76, 132, 1);
   color: white;
