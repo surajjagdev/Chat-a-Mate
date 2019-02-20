@@ -10,7 +10,8 @@ const Logo = () => {
           position: 'absolute',
           left: '1px',
           width: '130px',
-          top: '10px'
+          top: '10px',
+          cursor: 'pointer'
         }}
       />
     </div>
