@@ -61,6 +61,10 @@ body {
 }
 .newUserFormHeader3 {
   margin-top: -10px;
+  pointer-events: none;
+}
+.newUserFormHeader1 {
+  pointer-events: none;
 }
 .firstNameField,
 .emailField {
@@ -185,6 +189,7 @@ body {
   height: 50px;
   position: relative;
   top: 10px;
+  pointer-events: none;
 }
 @media screen and (max-width: 600px) {
   .existingUserFormHeader {
