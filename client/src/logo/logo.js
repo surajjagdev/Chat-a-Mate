@@ -7,6 +7,7 @@ const Logo = () => {
         src="../pictures/logos.PNG"
         style={{
           height: '50px',
+          gridArea: 'img',
           position: 'absolute',
           left: '1px',
           width: '130px',
