@@ -1,20 +1,9 @@
 import React from 'react';
+import '../register/registerForm.css';
 const Logo = () => {
   return (
-    <div className="logo">
-      <img
-        alt="Chat-a-Mate"
-        src="../pictures/logos.PNG"
-        style={{
-          height: '50px',
-          gridArea: 'img',
-          position: 'absolute',
-          left: '1px',
-          width: '130px',
-          top: '10px',
-          cursor: 'pointer'
-        }}
-      />
+    <div>
+      <img alt="Chat-a-Mate" src="../pictures/logos.PNG" className="logo" />
     </div>
   );
 };
