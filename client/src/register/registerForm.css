@@ -196,7 +196,7 @@ body {
     display: none;
   }
   .signIn {
-    margin-right: 10px;
+    margin-right: 2px;
     width: 80px;
     top: 18px;
   }
@@ -209,6 +209,6 @@ body {
   .newUserForm {
     left: 20px;
     width: 90%;
-    height: 35%;
+    height: 39%;
   }
 }
