@@ -198,7 +198,7 @@ body {
     display: none;
   }
   .signIn {
-    margin-right: 2px;
+    margin-left: 15px;
     width: 80px;
     top: 18px;
   }
@@ -212,6 +212,7 @@ body {
   .emailPass {
     display: grid;
     grid-template-columns: 100px auto;
+    grid-gap: 15px;
   }
   .firstNameField,
   .lastNameField,
