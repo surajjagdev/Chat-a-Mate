@@ -49,8 +49,9 @@ body {
   position: absolute;
   top: 40%;
   left: 50%;
+  overflow: hidden;
   display: grid;
-  grid-template-areas: 1fr 1fr;
+  grid-template-areas: 200px 200px;
   border: solid 1px blue;
   width: 49%;
   margin: 0 0 0 -25%;
@@ -207,9 +208,29 @@ body {
   .userPassword {
     width: 90px;
   }
+  .name,
+  .emailPass {
+    display: grid;
+    grid-template-columns: 100px auto;
+  }
+  .firstNameField,
+  .lastNameField,
+  .emailField,
+  .passwordField {
+    width: 100px;
+  }
+  .newUserFormHeader1 {
+    margin-left: -40px;
+    font-size: 110%;
+  }
+  .newUserFormHeader3 {
+    margin-left: -40px;
+  }
   .newUserForm {
-    left: 20px;
-    width: 90%;
-    height: 39%;
+    left: 20%;
+    width: 65%;
+    height: 220px;
+    margin: auto 0;
+    overflow: hidden;
   }
 }
