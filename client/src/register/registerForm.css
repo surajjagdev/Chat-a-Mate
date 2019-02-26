@@ -212,7 +212,7 @@ body {
   .emailPass {
     display: grid;
     grid-template-columns: 100px auto;
-    grid-gap: 25px;
+    grid-gap: 23px;
   }
   .firstNameField,
   .lastNameField,
