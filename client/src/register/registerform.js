@@ -47,7 +47,7 @@ class Register extends React.Component {
           />
           <input
             className="userPassword"
-            type="text"
+            type="password"
             placeholder="Password"
             name="userPassword"
             onChange={e => {
@@ -98,7 +98,7 @@ class Register extends React.Component {
             />
             <input
               className="passwordField"
-              type="text"
+              type="password"
               placeholder="Password"
               name="password"
               onChange={e => {
