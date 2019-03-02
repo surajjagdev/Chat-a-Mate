@@ -42,12 +42,27 @@ module.exports = function(sequelize, DataTypes) {
       //validation
       validation: {
         //is letters only
-        isEmail: true,
-        msg: 'Email Formatted Incorrectly'
-      },
-      len: {
-        args: [1, 100],
-        msg: 'Length is invalid'
+        isEmail: {
+          args: true,
+          msg: 'Email Formatted Incorrectly'
+        },
+        unique: {
+          args: true,
+          msg: 'Email address already in use!'
+        }
+      }
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validation: {
+        lengthOf: function(val) {
+          if (val.length < 5 || val.length < 15) {
+            throw new Error(
+              'please choose a password between 5 and 15 characters'
+            );
+          }
+        }
       }
     }
   });
