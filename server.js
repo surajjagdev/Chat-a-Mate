@@ -4,6 +4,7 @@ const app = express();
 const path = require('path');
 const PORT = process.env.PORT || 3001;
 const db = require('./models');
+const routes = require('./routes/routes');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 //static file declaration
@@ -18,9 +19,10 @@ if (process.env.NODE_ENV === 'prodution') {
   //});
 }
 //build mode local
-app.get('*', (req, res) => {
+/*app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname + '/client/public/index.html'));
-});
+});*/
+app.use(routes);
 
 //use routes when made and connect to mysql
 db.sequelize.sync({ force: true }).then(() => {

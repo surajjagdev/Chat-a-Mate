@@ -9,7 +9,6 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       //validation
       validation: {
-        //is letters only
         is: { args: ['^[a-z]+$', 'i'], msg: 'Name must be letters only' },
         len: {
           args: [1, 50],
@@ -56,12 +55,9 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
       validation: {
-        lengthOf: function(val) {
-          if (val.length < 5 || val.length < 15) {
-            throw new Error(
-              'please choose a password between 5 and 15 characters'
-            );
-          }
+        len: {
+          args: [7, 15],
+          msg: 'Password has to be between 7 and 15 characters'
         }
       }
     }

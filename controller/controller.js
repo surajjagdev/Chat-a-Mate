@@ -3,9 +3,6 @@ module.exports = {
   findEverything: (req, res) => {
     db.User.findAll({})
       .then(dbFindAll => {
-        if (!dbFindAll) {
-          return res.json('Nothing Found');
-        }
         return res.json(dbFindAll);
       })
       .catch(error => {
@@ -15,10 +12,13 @@ module.exports = {
       });
   },
   newUser: (req, res) => {
-    let [{ firstName, lastName, email, password }] = req.body;
-    db.create({
-      first_Name: firstName,
-      last_Name: lastName,
+    let first_name = req.body.first_name;
+    let last_name = req.body.last_name;
+    let email = req.body.email;
+    let password = req.body.password;
+    db.User.create({
+      first_name: first_name,
+      last_name: last_name,
       email: email,
       password: password
     })
