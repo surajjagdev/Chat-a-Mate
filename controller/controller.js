@@ -13,5 +13,25 @@ module.exports = {
           res.json(error);
         }
       });
+  },
+  newUser: (req, res) => {
+    let [{ firstName, lastName, email, password }] = req.body;
+    db.create({
+      first_Name: firstName,
+      last_Name: lastName,
+      email: email,
+      password: password
+    })
+      .then(created => {
+        if (!created) {
+          return res.json('An error has occured. User has not been saved');
+        }
+        return res.json(created);
+      })
+      .catch(error => {
+        if (error) {
+          return res.json(error);
+        }
+      });
   }
 };
