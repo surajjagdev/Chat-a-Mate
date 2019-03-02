@@ -14,20 +14,46 @@ class Register extends React.Component {
     e.preventDefault();
     let name = e.target.name;
     this.setState({ [name]: e.target.value }, () => {
-      console.log(
+      /*console.log(
         `firstName: ${this.state.firstName}, \nlastName: ${
           this.state.lastName
         }, \nemail: ${this.state.email},\n password:${this.state.password}`
-      );
+      );*/
     });
   };
   signIn = e => {
     e.preventDefault();
-    console.log(
-      `userName: ${this.state.userName}\n userPassword: ${
-        this.state.userPassword
-      }`
-    );
+    if (
+      this.state.userName !== '' &&
+      (this.state.userPassword !== '' && this.state.userPassword.length > 5)
+    ) {
+      console.log(
+        `userName: ${this.state.userName}\n userPassword: ${
+          this.state.userPassword
+        }`
+      );
+    } else {
+      alert('enter valid userName and password');
+    }
+  };
+  handleSubmit = e => {
+    e.preventDefault();
+    if (
+      this.state.firstName !== '' &&
+      this.state.lastName !== '' &&
+      this.state.email !== '' &&
+      this.state.password !== '' &&
+      this.state.password.length > 5
+    ) {
+      console.log(`Name: ${this.state.firstName}\n
+    Last Name:${this.state.lastName}\n
+    email:${this.state.email}\n
+    password:${this.state.password}
+    `);
+    } else {
+      alert('need to enter name, email and password');
+      return false;
+    }
   };
 
   render() {
@@ -106,6 +132,12 @@ class Register extends React.Component {
               }}
             />
           </div>
+          <button
+            className="newUserFormSubmit"
+            onClick={e => this.handleSubmit(e)}
+          >
+            Submit
+          </button>
         </div>
       </div>
     );
