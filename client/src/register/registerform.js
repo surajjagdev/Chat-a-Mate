@@ -32,6 +32,9 @@ class Register extends React.Component {
   emailValidationRegExp = RegExp(
     /^([A-Za-z0-9_\-.+])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,})$/
   );
+  stripTags = myString => {
+    return myString.replace(/(<([^>]+)>)/gi, '');
+  };
   handleInput = e => {
     e.preventDefault();
     const { name, value } = e.target;
@@ -94,13 +97,33 @@ class Register extends React.Component {
       const upperCase = string => {
         return string.charAt(0).toUpperCase() + string.slice(1);
       };
-      let firstName = upperCase(this.state.firstName);
-      let lastName = upperCase(this.state.lastName);
-      let email = this.state.email;
-      let password = this.state.password;
-      console.log(
-        `firstName:${firstName}\nlastName:${lastName}\nEmail:${email}\n Password:${password}`
+      let firstName = upperCase(
+        this.stripTags(this.state.firstName.split(' ').join(''))
       );
+      let lastName = upperCase(
+        this.stripTags(this.state.lastName.split(' ').join(''))
+      );
+      let email = this.state.email.split(' ').join('');
+      let password = this.state.password.split(' ').join('');
+      if (
+        firstName !== '' &&
+        firstName.length > 4 &&
+        firstName.length < 20 &&
+        lastName !== '' &&
+        lastName.length > 4 &&
+        lastName.length < 20 &&
+        email !== '' &&
+        email.length > 0 &&
+        password !== '' &&
+        password.length > 7 &&
+        password.length < 20
+      ) {
+        console.log(
+          `firstName:${firstName}\nlastName:${lastName}\nEmail:${email}\n Password:${password}`
+        );
+      } else {
+        alert('Error');
+      }
     } else {
       alert('Error in form. Please fix it.');
     }
