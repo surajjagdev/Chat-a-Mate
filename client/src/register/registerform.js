@@ -90,35 +90,8 @@ class Register extends React.Component {
       alert('Error in form. Please fix it.');
     }
   };
-  /*handleSubmit = e => {
-    e.preventDefault();
-    let validateEmail = email => {
-      let re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      return re.test(email);
-    };
-    let firstName = this.state.firstName.trim(),
-      lastName = this.state.lastName.trim(),
-      email = this.state.email.trim(),
-      password = this.state.password.trim();
-    if (
-      firstName !== '' &&
-      lastName !== '' &&
-      email !== '' &&
-      password !== '' &&
-      password.length > 5
-    ) {
-      const upperCase = string => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-      };
-      console.log(`Name: ${upperCase(this.state.firstName)}\n
-    Last Name:${upperCase(this.state.lastName)}\n
-    email:${this.state.email}\n
-    password:${this.state.password}
-    `);
-    } else {
-      alert('need to enter name, email and password');
-      return false;
-    }
+  /*const upperCase = string => {
+   return string.charAt(0).toUpperCase() + string.slice(1);
   };*/
 
   render() {
