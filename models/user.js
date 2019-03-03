@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
       //not allowing empty
       allowNull: false,
       //validation
-      validation: {
+      validate: {
         is: { args: ['^[a-z]+$', 'i'], msg: 'Name must be letters only' },
         len: {
           args: [1, 50],
@@ -23,7 +23,7 @@ module.exports = function(sequelize, DataTypes) {
       //not allowing empty
       allowNull: false,
       //validation
-      validation: {
+      validate: {
         //is letters only
         is: { args: ['^[a-z]+$', 'i'], msg: 'Name must be letters only' },
         len: {
@@ -38,23 +38,20 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING({ length: 100 }),
       //not allowing empty
       allowNull: false,
+      unique: true,
       //validation
-      validation: {
+      validate: {
         //is letters only
         isEmail: {
           args: true,
           msg: 'Email Formatted Incorrectly'
-        },
-        unique: {
-          args: true,
-          msg: 'Email address already in use!'
         }
       }
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
-      validation: {
+      validate: {
         len: {
           args: [7, 15],
           msg: 'Password has to be between 7 and 15 characters'
