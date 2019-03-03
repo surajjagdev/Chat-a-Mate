@@ -163,7 +163,7 @@ class Register extends React.Component {
             <input
               className="firstNameField"
               style={
-                formErrors.firstName.length > 0
+                formErrors.firstName.length > 0 || this.state.firstName === null
                   ? { borderColor: 'red' }
                   : { border: null }
               }
@@ -178,7 +178,7 @@ class Register extends React.Component {
               className="lastNameField"
               type="text"
               style={
-                formErrors.lastName.length > 0
+                formErrors.lastName.length > 0 || this.state.lastName === null
                   ? { borderColor: 'red' }
                   : { border: null }
               }
@@ -194,7 +194,7 @@ class Register extends React.Component {
               className="emailField"
               type="text"
               style={
-                formErrors.email.length > 0
+                formErrors.email.length > 0 || this.state.email === null
                   ? { borderColor: 'red' }
                   : { border: null }
               }
@@ -208,7 +208,7 @@ class Register extends React.Component {
               className="passwordField"
               type="password"
               style={
-                formErrors.password.length > 0
+                formErrors.password.length > 0 || this.state.password === null
                   ? { borderColor: 'red' }
                   : { border: null }
               }
