@@ -41,7 +41,7 @@ class Register extends React.Component {
       case 'firstName':
         formErrors.firstName =
           value.length < 4 || value.length > 20
-            ? 'First must be between 4 and 20 characters.If longer shorten it. If shorter lengthen it.'
+            ? 'First Name must be between 4 and 20 characters.If longer shorten it. If shorter lengthen it.'
             : '';
         break;
       case 'lastName':
@@ -65,12 +65,7 @@ class Register extends React.Component {
       default:
         break;
     }
-    this.setState({ formErrors, [name]: value }, () => {
-      console.log(`firsName:${this.state.firstName}\n
-      lastName: ${this.state.lastName}\n
-      email:${this.state.email}\n
-      password:${this.state.password}`);
-    });
+    this.setState({ formErrors, [name]: value });
   };
   signIn = e => {
     e.preventDefault();
@@ -96,15 +91,20 @@ class Register extends React.Component {
       this.state.email !== null &&
       this.state.password !== null
     ) {
-      console.log('valid');
+      const upperCase = string => {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+      };
+      let firstName = upperCase(this.state.firstName);
+      let lastName = upperCase(this.state.lastName);
+      let email = this.state.email;
+      let password = this.state.password;
+      console.log(
+        `firstName:${firstName}\nlastName:${lastName}\nEmail:${email}\n Password:${password}`
+      );
     } else {
       alert('Error in form. Please fix it.');
     }
   };
-  /*const upperCase = string => {
-   return string.charAt(0).toUpperCase() + string.slice(1);
-  };*/
-
   render() {
     const formErrors = this.state.formErrors;
     return (
@@ -162,6 +162,11 @@ class Register extends React.Component {
           <div className="name">
             <input
               className="firstNameField"
+              style={
+                formErrors.firstName.length > 0
+                  ? { borderColor: 'red' }
+                  : { border: null }
+              }
               type="text"
               placeholder="First Name"
               name="firstName"
@@ -172,6 +177,11 @@ class Register extends React.Component {
             <input
               className="lastNameField"
               type="text"
+              style={
+                formErrors.lastName.length > 0
+                  ? { borderColor: 'red' }
+                  : { border: null }
+              }
               placeholder="Last Name"
               name="lastName"
               onChange={e => {
@@ -183,6 +193,11 @@ class Register extends React.Component {
             <input
               className="emailField"
               type="text"
+              style={
+                formErrors.email.length > 0
+                  ? { borderColor: 'red' }
+                  : { border: null }
+              }
               placeholder="Email"
               name="email"
               onChange={e => {
@@ -192,6 +207,11 @@ class Register extends React.Component {
             <input
               className="passwordField"
               type="password"
+              style={
+                formErrors.password.length > 0
+                  ? { borderColor: 'red' }
+                  : { border: null }
+              }
               placeholder="Password"
               name="password"
               onChange={e => {
