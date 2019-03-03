@@ -8,18 +8,64 @@ class Register extends React.Component {
     firstName: '',
     lastName: '',
     email: '',
-    password: ''
+    password: '',
+    formErrors: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: ''
+    }
   };
+  formValid = formErrors => {
+    let valid = true;
+    //go through form errors and forEach if length of property is greater than one string return valid being false.
+    Object.values(formErrors).forEach(val => {
+      val.length > 0 && (valid = false);
+    });
+    return valid;
+  };
+  //email validation
+  emailValidationRegExp = RegExp(
+    /^([A-Za-z0-9_\-.+])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,})$/
+  );
   handleInput = e => {
     e.preventDefault();
-    let name = e.target.name;
-    this.setState({ [name]: e.target.value }, () => {
-      /*console.log(
-        `firstName: ${this.state.firstName}, \nlastName: ${
-          this.state.lastName
-        }, \nemail: ${this.state.email},\n password:${this.state.password}`
-      );*/
+    const { name, value } = e.target;
+    let formErrors = this.state.formErrors;
+    //switch form case errors
+    switch (name) {
+      case 'firstName':
+        formErrors.firstName =
+          value.length < 4 || value.length > 20
+            ? 'First must be between 4 and 20 characters.If longer shorten it. If shorter lengthen it.'
+            : '';
+        break;
+      case 'lastName':
+        formErrors.lastName =
+          value.length < 4 || value.length > 20
+            ? 'Last Name must be between 4 and 20 characters. If longer shorten it. If shorter lengthen it.'
+            : '';
+        break;
+      case 'email':
+        formErrors.email =
+          this.emailValidationRegExp.test(value) && value.length > 0
+            ? ''
+            : 'Please enter a valid email address.';
+        break;
+      case 'password':
+        formErrors.password =
+          value.length < 7 || value.length > 15
+            ? 'Password must be greater than 7 characters, but less than 15 characters.'
+            : '';
+        break;
+      default:
+        break;
+    }
+    this.setState({ formErrors, [name]: value }, () => {
+      console.log(this.state.formErrors);
     });
+    /* let name = e.target.name;
+    this.setState({ [name]: e.target.value });*/
   };
   signIn = e => {
     e.preventDefault();
@@ -38,15 +84,34 @@ class Register extends React.Component {
   };
   handleSubmit = e => {
     e.preventDefault();
+    if (this.formValid(this.state.formErrors)) {
+      console.log('valid');
+    } else {
+      alert('Error in form. Please fix it.');
+    }
+  };
+  /*handleSubmit = e => {
+    e.preventDefault();
+    let validateEmail = email => {
+      let re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
+    };
+    let firstName = this.state.firstName.trim(),
+      lastName = this.state.lastName.trim(),
+      email = this.state.email.trim(),
+      password = this.state.password.trim();
     if (
-      this.state.firstName !== '' &&
-      this.state.lastName !== '' &&
-      this.state.email !== '' &&
-      this.state.password !== '' &&
-      this.state.password.length > 5
+      firstName !== '' &&
+      lastName !== '' &&
+      email !== '' &&
+      password !== '' &&
+      password.length > 5
     ) {
-      console.log(`Name: ${this.state.firstName}\n
-    Last Name:${this.state.lastName}\n
+      const upperCase = string => {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+      };
+      console.log(`Name: ${upperCase(this.state.firstName)}\n
+    Last Name:${upperCase(this.state.lastName)}\n
     email:${this.state.email}\n
     password:${this.state.password}
     `);
@@ -54,9 +119,10 @@ class Register extends React.Component {
       alert('need to enter name, email and password');
       return false;
     }
-  };
+  };*/
 
   render() {
+    const formErrors = this.state.formErrors;
     return (
       <div className="homePage">
         <div className="existingUserForm">
@@ -88,6 +154,23 @@ class Register extends React.Component {
           >
             Log In
           </button>
+        </div>
+        <div className="errorSpan">
+          {formErrors.firstName.length > 0 && (
+            <span className="errorMessage">{formErrors.firstName}</span>
+          )}
+          <br />
+          {formErrors.lastName.length > 0 && (
+            <span className="errorMessage">{formErrors.lastName}</span>
+          )}
+          <br />
+          {formErrors.email.length > 0 && (
+            <span className="errorMessage">{formErrors.email}</span>
+          )}
+          <br />
+          {formErrors.password.length > 0 && (
+            <span className="errorMessage">{formErrors.password}</span>
+          )}
         </div>
         <div className="newUserForm">
           <h1 className="newUserFormHeader1">Don't Have an Account</h1>
