@@ -5,10 +5,10 @@ class Register extends React.Component {
   state = {
     userName: '',
     userPassword: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
+    firstName: null,
+    lastName: null,
+    email: null,
+    password: null,
     formErrors: {
       firstName: '',
       lastName: '',
@@ -16,11 +16,15 @@ class Register extends React.Component {
       password: ''
     }
   };
-  formValid = formErrors => {
+  formValid = (formErrors, ...rest) => {
     let valid = true;
-    //go through form errors and forEach if length of property is greater than one string return valid being false.
+    //valid form errors being empty
     Object.values(formErrors).forEach(val => {
       val.length > 0 && (valid = false);
+    });
+    //validate form was filled out
+    Object.values(rest).forEach(val => {
+      val === null && (valid = false);
     });
     return valid;
   };
@@ -62,10 +66,11 @@ class Register extends React.Component {
         break;
     }
     this.setState({ formErrors, [name]: value }, () => {
-      console.log(this.state.formErrors);
+      console.log(`firsName:${this.state.firstName}\n
+      lastName: ${this.state.lastName}\n
+      email:${this.state.email}\n
+      password:${this.state.password}`);
     });
-    /* let name = e.target.name;
-    this.setState({ [name]: e.target.value });*/
   };
   signIn = e => {
     e.preventDefault();
@@ -84,7 +89,13 @@ class Register extends React.Component {
   };
   handleSubmit = e => {
     e.preventDefault();
-    if (this.formValid(this.state.formErrors)) {
+    if (
+      this.formValid(this.state.formErrors) &&
+      this.state.firstName !== null &&
+      this.state.lastName !== null &&
+      this.state.email !== null &&
+      this.state.password !== null
+    ) {
       console.log('valid');
     } else {
       alert('Error in form. Please fix it.');
