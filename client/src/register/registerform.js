@@ -32,9 +32,11 @@ class Register extends React.Component {
   emailValidationRegExp = RegExp(
     /^([A-Za-z0-9_\-.+])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,})$/
   );
+  //strip html tags
   stripTags = myString => {
     return myString.replace(/(<([^>]+)>)/gi, '');
   };
+  //handle input. Then validate
   handleInput = e => {
     e.preventDefault();
     const { name, value } = e.target;
@@ -85,6 +87,9 @@ class Register extends React.Component {
       alert('enter valid userName and password');
     }
   };
+  //submit form
+  //upper case first letter, dont allow null
+  //strip html tags and then check length
   handleSubmit = e => {
     e.preventDefault();
     if (
