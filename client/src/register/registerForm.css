@@ -185,6 +185,48 @@ body {
 }
 .newUserFormSubmit {
   cursor: pointer;
+  background: rgba(16, 76, 132, 1);
+  background: -moz-linear-gradient(
+    left,
+    rgba(16, 76, 132, 1) 0%,
+    rgba(13, 58, 110, 1) 70%,
+    rgba(13, 58, 110, 1) 84%
+  );
+  background: -webkit-gradient(
+    left top,
+    right top,
+    color-stop(0%, rgba(16, 76, 132, 1)),
+    color-stop(70%, rgba(13, 58, 110, 1)),
+    color-stop(84%, rgba(13, 58, 110, 1))
+  );
+  background: -webkit-linear-gradient(
+    left,
+    rgba(16, 76, 132, 1) 0%,
+    rgba(13, 58, 110, 1) 70%,
+    rgba(13, 58, 110, 1) 84%
+  );
+  background: -o-linear-gradient(
+    left,
+    rgba(16, 76, 132, 1) 0%,
+    rgba(13, 58, 110, 1) 70%,
+    rgba(13, 58, 110, 1) 84%
+  );
+  background: -ms-linear-gradient(
+    left,
+    rgba(16, 76, 132, 1) 0%,
+    rgba(13, 58, 110, 1) 70%,
+    rgba(13, 58, 110, 1) 84%
+  );
+  background: linear-gradient(
+    to right,
+    rgba(16, 76, 132, 1) 0%,
+    rgba(13, 58, 110, 1) 70%,
+    rgba(13, 58, 110, 1) 84%
+  );
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#104c84', endColorstr='#0d3a6e', GradientType=1 );
+
+  border: none;
+  color: white;
 }
 
 .existingUserFormHeader {
