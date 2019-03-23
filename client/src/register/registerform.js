@@ -185,11 +185,12 @@ class Register extends React.Component {
             <span className="errorMessage">{formErrors.password}</span>
           )}
         </div>
-        <div className="newUserForm">
+        <div className="newUserForm" ref="form">
           <h1 className="newUserFormHeader1">Don't Have an Account</h1>
           <h3 className="newUserFormHeader3">Create One</h3>
           <div className="name">
             <input
+              ref="firstName"
               className="firstNameField"
               style={
                 formErrors.firstName.length > 0 || this.state.firstName === null
@@ -204,6 +205,7 @@ class Register extends React.Component {
               }}
             />
             <input
+              ref="lastName"
               className="lastNameField"
               type="text"
               style={
@@ -220,6 +222,7 @@ class Register extends React.Component {
           </div>
           <div className="emailPass">
             <input
+              ref="email"
               className="emailField"
               type="text"
               style={
@@ -234,6 +237,7 @@ class Register extends React.Component {
               }}
             />
             <input
+              ref="password"
               className="passwordField"
               type="password"
               style={
