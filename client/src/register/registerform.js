@@ -1,5 +1,6 @@
 import React from 'react';
 import Logo from '../logo/logo.js';
+import { Link } from 'react-router-dom';
 import './registerForm.css';
 class Register extends React.Component {
   state = {
@@ -112,15 +113,15 @@ class Register extends React.Component {
       let password = this.state.password.split(' ').join('');
       if (
         firstName !== '' &&
-        firstName.length > 4 &&
+        firstName.length >= 4 &&
         firstName.length < 20 &&
         lastName !== '' &&
-        lastName.length > 4 &&
+        lastName.length >= 4 &&
         lastName.length < 20 &&
         email !== '' &&
         email.length > 0 &&
         password !== '' &&
-        password.length > 7 &&
+        password.length >= 7 &&
         password.length < 20
       ) {
         console.log(
@@ -254,6 +255,27 @@ class Register extends React.Component {
             Submit
           </button>
         </div>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/surajjagdev/Chat-a-Mate"
+        >
+          <div
+            style={{
+              position: 'absolute',
+              right: '0',
+              bottom: '0',
+              width: '30px',
+              height: '30px'
+            }}
+          >
+            <img
+              alt="Chat-a-Mate"
+              src="../pictures/Github-Icon.png"
+              style={{ width: '30px', height: '30px' }}
+            />
+          </div>
+        </a>
       </div>
     );
   }
