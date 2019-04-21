@@ -11,16 +11,21 @@ module.exports = {
         }
       });
   },
-  newUser: (req, res) => {
+  newUser: (req, res, next) => {
+    //strip tags afterwards.
     let first_name = req.body.first_name;
     let last_name = req.body.last_name;
     let email = req.body.email;
     let password = req.body.password;
+    const stripTagsFunction = myString => {
+      return myString.replace(/(<([^>]+)>)/gi, '');
+    };
+    //strip html tags and remove uneccessary white spaces
     db.User.create({
-      first_name: first_name,
-      last_name: last_name,
-      email: email,
-      password: password
+      first_name: stripTagsFunction(first_name.split(' ').join('')),
+      last_name: stripTagsFunction(last_name.split(' ').join('')),
+      email: stripTagsFunction(email.split(' ').join('')),
+      password: stripTagsFunction(password)
     })
       .then(created => {
         if (!created) {
