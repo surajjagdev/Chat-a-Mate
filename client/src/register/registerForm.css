@@ -141,7 +141,7 @@ body {
 
 .userName {
   position: relative;
-  height: 40px;
+  height: 35px;
   top: 15px;
   margin-left: 5px;
   /*
@@ -153,7 +153,7 @@ body {
 }
 .userPassword {
   position: relative;
-  height: 40px;
+  height: 35px;
   top: 15px;
   margin-left: 5px;
 
@@ -235,6 +235,7 @@ body {
   margin-left: 5px;
   color: white;
   cursor: pointer;
+  margin-top: 20px;
 }
 .logo {
   height: 50px;
