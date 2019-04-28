@@ -48,15 +48,35 @@ module.exports = function(sequelize, DataTypes) {
         }
       }
     },
+    password_hash: { type: DataTypes.STRING, allowNull: false },
+    //password field is virtual. Grab password from user input then will hash and set the password_hash field.
     password: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: DataTypes.VIRTUAL,
+      set: function(val) {
+        this.setDataValue('password', val); // Remember to set the data value, otherwise it won't be validated
+        this.setDataValue('password_hash', 8 + val);
+      },
       validate: {
-        len: {
-          args: [7, 15],
-          msg: 'Password has to be between 7 and 15 characters'
+        isLongEnough: function(val) {
+          if (val.length < 7) {
+            throw new Error('Please choose a longer password');
+          }
         }
       }
+    },
+    //number of posts user has
+    number_posts: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    }, //number of posts user has
+    number_likes: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    //friends array. Can't use array dataType in mysql2 through sequelize, so will save as text.
+    friendsArray: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   });
   return User;
