@@ -1,6 +1,7 @@
 import React from 'react';
 import Logo from '../logo/logo.js';
 import { Link } from 'react-router-dom';
+import API from '../utils/api.js';
 import './registerForm.css';
 class Register extends React.Component {
   state = {
@@ -10,6 +11,7 @@ class Register extends React.Component {
     lastName: null,
     email: null,
     password: null,
+    serverErrors: '',
     formErrors: {
       firstName: '',
       lastName: '',
@@ -124,10 +126,28 @@ class Register extends React.Component {
         password.length >= 7 &&
         password.length < 20
       ) {
-        console.log(
-          `firstName:${firstName}\nlastName:${lastName}\nEmail:${email}\n Password:${password}`
-        );
+        API.newuser({
+          first_name: firstName,
+          last_name: lastName,
+          email: email,
+          password: password
+        }).then((data, error) => {
+          const success = data.data.success;
+          if (success === true) {
+            this.setState({ serverErrors: '' });
+            console.log('success');
+          } else if (success === false) {
+            const returnedErrors = data.data.errors.errors;
+            this.setState({ serverErrors: data.data.errors.errors });
+            console.log(returnedErrors);
+          } else if (error) {
+            console.log('complete error');
+          } else {
+            console.log('nothing');
+          }
+        });
       } else {
+        this.setState({ serverErrors: '' });
         alert('Error');
       }
     } else {
@@ -169,6 +189,17 @@ class Register extends React.Component {
           </button>
         </div>
         <div className="errorSpan">
+          {this.state.serverErrors.length > 0
+            ? this.state.serverErrors.map((error, index) => {
+                return (
+                  <span key={index} className="errorMessage">
+                    Error: {error.message}. Please make appropriate changes
+                    before resubmission.
+                  </span>
+                );
+              })
+            : null}
+          <br />
           {formErrors.firstName.length > 0 && (
             <span className="errorMessage">{formErrors.firstName}</span>
           )}
