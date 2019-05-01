@@ -40,7 +40,7 @@ module.exports = {
         })
         .catch(error => {
           if (error) {
-            return res.json(error);
+            return res.json({ success: false, errors: error });
           }
         });
     } else {
