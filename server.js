@@ -28,7 +28,7 @@ if (process.env.NODE_ENV === 'production') {
 app.use(cookieParser());
 app.use(
   session({
-    secret: 'keyboard cat',
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true
     /*,
