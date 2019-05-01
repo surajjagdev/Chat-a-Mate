@@ -20,7 +20,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       //validation
       validate: {
-        is: { args: ['^[a-z]+$', 'i'], msg: 'Name must be letters only' },
+        is: { args: ['^[a-z]+$', 'i'], msg: 'First name must be letters only' },
         len: {
           args: [1, 50],
           msg: 'Name must be between 1 and 50 characters'
@@ -36,7 +36,7 @@ module.exports = function(sequelize, DataTypes) {
       //validation
       validate: {
         //is letters only
-        is: { args: ['^[a-z]+$', 'i'], msg: 'Name must be letters only' },
+        is: { args: ['^[a-z]+$', 'i'], msg: 'Last name must be letters only' },
         len: {
           args: [1, 50],
           msg: 'Name must be between 1 and 50 characters'
