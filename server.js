@@ -5,6 +5,9 @@ const path = require('path');
 const PORT = process.env.PORT || 3001;
 const db = require('./models');
 const routes = require('./routes/routes');
+//Authethication packages
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 //static file declaration
@@ -22,6 +25,16 @@ if (process.env.NODE_ENV === 'production') {
 /*app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname + '/client/public/index.html'));
 });*/
+app.use(cookieParser());
+app.use(
+  session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true
+    /*,
+    cookie: { secure: true }*/
+  })
+);
 app.use(routes);
 
 //use routes when made and connect to mysql
