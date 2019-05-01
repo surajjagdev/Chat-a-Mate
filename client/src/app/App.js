@@ -1,5 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  Redirect
+} from 'react-router-dom';
 import Register from '../register/registerform';
 import './App.css';
 
