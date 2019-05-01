@@ -1,6 +1,17 @@
+const uuidv4 = require('uuid/v4');
 //export
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define('User', {
+    //id using a uuid instead
+    id: {
+      allowNull: false,
+      primaryKey: true,
+      type: DataTypes.UUID,
+      validate: {
+        notNull: true
+      },
+      defaultValue: () => uuidv4()
+    },
     //first name
     first_name: {
       //String limit of 255 default, making it 50 length
@@ -81,15 +92,3 @@ module.exports = function(sequelize, DataTypes) {
   });
   return User;
 };
-/*devoured: {
-  //boolean type 0 or 1 only
-  type: DataTypes.BOOLEAN,
-    //not allowing empty
-    allowNull: false,
-      //default is false
-      defaultValue: false,
-        //validation
-        validation: {
-    //not allowing letters
-    not: ['[a-z]', 'i']
-  }*/
