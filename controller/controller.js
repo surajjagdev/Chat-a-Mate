@@ -1,4 +1,6 @@
 const db = require('../models');
+const bycrpt = require('bcrypt');
+const saltRounds = 10;
 module.exports = {
   findEverything: (req, res) => {
     db.User.findAll({})
@@ -19,30 +21,36 @@ module.exports = {
       return myString.replace(/(<([^>]+)>)/gi, '');
     };
     if (first_name && last_name && email && password) {
-      db.User.create({
-        first_name: stripTagsFunction(first_name.split(' ').join('')),
-        last_name: stripTagsFunction(last_name.split(' ').join('')),
-        email: stripTagsFunction(email.split(' ').join('')),
-        password: stripTagsFunction(password)
-      })
-        .then(created => {
-          if (!created) {
-            return res.status(400).json({
-              success: false,
-              message: 'An error has occured. User has not been saved'
+      bycrpt.hash(password, saltRounds, function(err, hash) {
+        if (!err) {
+          db.User.create({
+            first_name: stripTagsFunction(first_name.split(' ').join('')),
+            last_name: stripTagsFunction(last_name.split(' ').join('')),
+            email: stripTagsFunction(email.split(' ').join('')),
+            password: hash
+          })
+            .then(created => {
+              if (!created) {
+                return res.status(400).json({
+                  success: false,
+                  message: 'An error has occured. User has not been saved'
+                });
+              }
+              return res.json({
+                success: true,
+                data: created,
+                message: 'User successfully created'
+              });
+            })
+            .catch(error => {
+              if (error) {
+                return res.json({ success: false, errors: error });
+              }
             });
-          }
-          return res.json({
-            success: true,
-            data: created,
-            message: 'User successfully created'
-          });
-        })
-        .catch(error => {
-          if (error) {
-            return res.json({ success: false, errors: error });
-          }
-        });
+        } else {
+          res.json({ success: false, errors: err, message: 'Hash Failed' });
+        }
+      });
     } else {
       res
         .status(400)
