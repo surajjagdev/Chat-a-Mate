@@ -52,7 +52,7 @@ module.exports = function(sequelize, DataTypes) {
       unique: true,
       //validation
       validate: {
-        //is letters only
+        //is email
         isEmail: {
           args: true,
           msg: 'Email Formatted Incorrectly'
@@ -65,7 +65,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.VIRTUAL,
       set: function(val) {
         this.setDataValue('password', val); // Remember to set the data value, otherwise it won't be validated
-        this.setDataValue('password_hash', 8 + val);
+        this.setDataValue('password_hash', val);
       },
       validate: {
         isLongEnough: function(val) {
