@@ -8,6 +8,7 @@ const routes = require('./routes/routes');
 //Authethication packages
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const passport = require('passport');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 //static file declaration
@@ -31,11 +32,13 @@ app.use(
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true
-    /*,
-    cookie: { secure: true }*/
+    //,
+    //cookie: { secure: true }
   })
 );
 app.use(routes);
+app.use(passport.initialize());
+app.use(passport.session());
 
 //use routes when made and connect to mysql
 db.sequelize.sync({ force: true }).then(() => {
