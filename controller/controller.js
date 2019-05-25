@@ -1,7 +1,5 @@
 const db = require('../models');
 const bycrpt = require('bcrypt');
-const app = require('express')();
-const session = require('express-session');
 const saltRounds = 10;
 module.exports = {
   findEverything: (req, res) => {
@@ -38,15 +36,6 @@ module.exports = {
                   message: 'An error has occured. User has not been saved'
                 });
               }
-              app.use(
-                session({
-                  secret: 'cat',
-                  resave: false,
-                  saveUninitialized: true
-                  /*,
-                  cookie: { secure: true }*/
-                })
-              );
               return res.json({
                 success: true,
                 data: created,
