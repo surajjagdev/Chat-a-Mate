@@ -29,7 +29,7 @@ const sessionOptions = {
   key: 'user_sid',
   secret: process.env.SECRET,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
     expires: 600000,
     secure: process.env.NODE_ENV === 'production' ? true : false
