@@ -9,6 +9,7 @@ const routes = require('./controller/controller');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
+const MySQLStore = require('express-mysql-session')(session);
 //static file declaration
 app.use(express.static(path.join(__dirname, 'client/build')));
 //serve up static assets production
@@ -44,6 +45,7 @@ app.use(cookieParser(process.env.SECRET));
 app.use(session(sessionOptions));
 //passport
 app.use(passport.initialize());
+
 app.use(passport.session());
 app.use(routes);
 //use routes when made and connect to mysql
