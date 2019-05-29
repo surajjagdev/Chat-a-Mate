@@ -83,5 +83,24 @@ passport.deserializeUser((userId, done) => {
   done(null, userId);
   //});
 });
+//authentication middleware
+function authenticationMiddleware() {
+  return (req, res, next) => {
+    console.log(
+      `req.session.passport.user: ${JSON.stringify(req.session.passport)}`
+    );
+    if (req.isAuthenticated()) {
+      return next();
+    } else {
+      return res
+        .json({
+          success: false,
+          data: 'unable to login',
+          message: 'unsuccessfull login process'
+        })
+        .status(400);
+    }
+  };
+}
 //passport
 module.exports = router;
