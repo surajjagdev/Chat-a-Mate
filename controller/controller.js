@@ -40,6 +40,8 @@ router.post('/api/newuser', (req, res, next) => {
               });
             } else if (created && typeof userId !== 'undefined') {
               req.login(userId, error => {
+                console.log('req.user: ', req.user);
+                console.log('is authenticated: ', req.isAuthenticated());
                 if (!error) {
                   return res.json({
                     success: true,
@@ -78,7 +80,7 @@ passport.serializeUser((userId, done) => {
 passport.deserializeUser((userId, done) => {
   //db.User.findById(id, (err, userId) => {
   console.log('from deseralize: ', userId);
-  done(err, userId);
+  done(null, userId);
   //});
 });
 //passport
