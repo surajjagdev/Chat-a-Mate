@@ -4,7 +4,7 @@ const app = express();
 const path = require('path');
 const PORT = process.env.PORT || 3001;
 const db = require('./models');
-const routes = require('./routes/routes');
+const routes = require('./controller/controller');
 //Authethication packages
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
@@ -29,7 +29,7 @@ const sessionOptions = {
   key: 'user_sid',
   secret: process.env.SECRET,
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true,
   cookie: {
     expires: 600000,
     secure: process.env.NODE_ENV === 'production' ? true : false
@@ -37,7 +37,7 @@ const sessionOptions = {
 };
 //middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 //cookieparse
 app.use(cookieParser(process.env.SECRET));
 //express session
@@ -45,7 +45,6 @@ app.use(session(sessionOptions));
 //passport
 app.use(passport.initialize());
 app.use(passport.session());
-//use routes
 app.use(routes);
 //use routes when made and connect to mysql
 db.sequelize.sync({ force: true }).then(() => {
