@@ -9,7 +9,7 @@ const routes = require('./controller/controller');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
-const MySQLStore = require('express-mysql-session')(session);
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
 //static file declaration
 app.use(express.static(path.join(__dirname, 'client/build')));
 //serve up static assets production
@@ -32,9 +32,13 @@ const sessionOptions = {
   resave: false,
   saveUninitialized: false,
   cookie: {
-    expires: 600000,
+    maxAge: 30 * 24 * 60 * 60 * 1000, //1 month
     secure: process.env.NODE_ENV === 'production' ? true : false
-  }
+  },
+  store: new SequelizeStore({
+    db: db,
+    table: 'Session'
+  })
 };
 //middleware
 app.use(express.json());
