@@ -32,18 +32,29 @@ router.post('/api/newuser', (req, res, next) => {
           password: hash
         })
           .then(created => {
+            const userId = created.id;
             if (!created) {
               return res.status(400).json({
                 success: false,
                 message: 'An error has occured. User has not been saved'
               });
+            } else if (created && typeof userId !== 'undefined') {
+              req.login(userId, error => {
+                if (!error) {
+                  return res.json({
+                    success: true,
+                    data: created,
+                    message: 'User successfully created'
+                  });
+                } else {
+                  return res.json({
+                    success: false,
+                    data: 'corrupted seralization',
+                    message: 'User created Successfully, but not seralized'
+                  });
+                }
+              });
             }
-            const userId = created.id;
-            return res.json({
-              success: true,
-              data: created,
-              message: 'User successfully created'
-            });
           })
           .catch(error => {
             if (error) {
@@ -60,13 +71,15 @@ router.post('/api/newuser', (req, res, next) => {
       .json({ success: false, message: 'Error Missing Parameters' });
   }
 });
-passport.serializeUser((user, done) => {
-  done(null, user.id);
+passport.serializeUser((userId, done) => {
+  console.log('from seralized userId: ', userId);
+  done(null, userId);
 });
-passport.deserializeUser((id, done) => {
-  db.User.findById(id, (err, user) => {
-    done(err, user);
-  });
+passport.deserializeUser((userId, done) => {
+  //db.User.findById(id, (err, userId) => {
+  console.log('from deseralize: ', userId);
+  done(err, userId);
+  //});
 });
 //passport
 module.exports = router;

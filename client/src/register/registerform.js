@@ -136,6 +136,7 @@ class Register extends React.Component {
           if (success === true) {
             this.setState({ serverErrors: '' });
             console.log('success');
+            console.log(data.data);
           } else if (success === false) {
             const returnedErrors = data.data.errors.errors;
             this.setState({ serverErrors: data.data.errors.errors });
