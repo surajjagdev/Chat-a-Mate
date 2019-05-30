@@ -4,6 +4,9 @@ const passport = require('passport');
 const express = require('express');
 const router = express.Router();
 const saltRounds = 10;
+router.get('/test', authenticationMiddleware(), (req, res) => {
+  return res.json({ message: 'hello' });
+});
 router.get('/api/users', (req, res, next) => {
   db.User.findAll({})
     .then(dbFindAll => {
@@ -78,10 +81,10 @@ passport.serializeUser((userId, done) => {
   done(null, userId);
 });
 passport.deserializeUser((userId, done) => {
-  //db.User.findById(id, (err, userId) => {
-  console.log('from deseralize: ', userId);
-  done(null, userId);
-  //});
+  db.User.findById(userId, (err, user) => {
+    console.log('from deseralize: ', user);
+    done(null, user);
+  });
 });
 //authentication middleware
 function authenticationMiddleware() {
@@ -89,6 +92,8 @@ function authenticationMiddleware() {
     console.log(
       `req.session.passport.user: ${JSON.stringify(req.session.passport)}`
     );
+    console.log(req.session);
+    console.log('is authenticated middleware: ', req.isAuthenticated());
     if (req.isAuthenticated()) {
       return next();
     } else {
@@ -98,7 +103,7 @@ function authenticationMiddleware() {
           data: 'unable to login',
           message: 'unsuccessfull login process'
         })
-        .status(400);
+        .status(404);
     }
   };
 }
