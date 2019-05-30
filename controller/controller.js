@@ -4,8 +4,9 @@ const passport = require('passport');
 const express = require('express');
 const router = express.Router();
 const saltRounds = 10;
-router.get('/test', authenticationMiddleware(), (req, res) => {
-  return res.json({ message: 'hello' });
+router.post('/test', authenticationMiddleware(), (req, res) => {
+  const body = req.body;
+  console.log(body);
 });
 router.get('/api/users', (req, res, next) => {
   db.User.findAll({})
@@ -76,23 +77,26 @@ router.post('/api/newuser', (req, res, next) => {
       .json({ success: false, message: 'Error Missing Parameters' });
   }
 });
-passport.serializeUser((userId, done) => {
+passport.serializeUser(function(userId, done) {
   console.log('from seralized userId: ', userId);
   done(null, userId);
 });
-passport.deserializeUser((userId, done) => {
-  db.User.findById(userId, (err, user) => {
-    console.log('from deseralize: ', user);
-    done(null, user);
+passport.deserializeUser(function(userId, done) {
+  db.User.findOne({ where: { id: userId } }).then(user => {
+    if (user) {
+      console.log('\n\n\n\nFound User\n\n\n\n');
+      done(null, user);
+    } else {
+      return res.json({ error: 'Error deseralize' });
+    }
   });
 });
 //authentication middleware
 function authenticationMiddleware() {
-  return (req, res, next) => {
-    console.log(
-      `req.session.passport.user: ${JSON.stringify(req.session.passport)}`
-    );
-    console.log(req.session);
+  /* return (req, res, next) => {
+    console.log('req.session: ', req.session);
+    console.log('req.user: ', req.user);
+    console.log('req.userId: ', req.userId);
     console.log('is authenticated middleware: ', req.isAuthenticated());
     if (req.isAuthenticated()) {
       return next();
@@ -105,7 +109,44 @@ function authenticationMiddleware() {
         })
         .status(404);
     }
+  };*/
+  return (req, res, next) => {
+    const user = req.signedCookies.user_sid;
+    console.log('user: ', user);
+    db.Session.findOne({
+      where: {
+        sid: user
+      }
+    }).then(found => {
+      if (!found) {
+        console.log(found);
+        return res.json({
+          auth: req.isAuthenticated(),
+          message: 'authenticated'
+        });
+      } else {
+        return login(found.id);
+      }
+    });
+    function login(user) {
+      req.login(user, error => {
+        if (!error) {
+          return (
+            next(),
+            res.json({ auth: req.isAuthenticated(), message: 'authenticated' })
+          );
+        } else {
+          return res.json({
+            auth: req.isAuthenticated(),
+            user: req.user,
+            error: 'Error',
+            message: 'Auth middleware'
+          });
+        }
+      });
+    }
   };
 }
+
 //passport
 module.exports = router;

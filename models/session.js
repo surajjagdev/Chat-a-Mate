@@ -1,14 +1,13 @@
-module.exports = function(sequelize, DataTypes) {
+const sequelize = require('sequelize');
+module.exports = function(sequelize, Sequelize) {
   var Session = sequelize.define('Session', {
-    //session id
     sid: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       primaryKey: true
     },
-    //expires
-    expires: DataTypes.DATE,
-    //data from passport session cookie
-    data: DataTypes.STRING(5000)
+    expires: Sequelize.DATE,
+    data: Sequelize.TEXT
   });
+
   return Session;
 };

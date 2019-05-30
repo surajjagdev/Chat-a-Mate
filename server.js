@@ -9,6 +9,7 @@ const routes = require('./controller/controller');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
+const sequelize = require('sequelize');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 //static file declaration
 app.use(express.static(path.join(__dirname, 'client/build')));
@@ -26,6 +27,12 @@ if (process.env.NODE_ENV === 'production') {
   res.sendFile(path.join(__dirname + '/client/public/index.html'));
 });*/
 //session options
+function extendedDefaultFields(defaults, session) {
+  return {
+    data: defaults.data,
+    expires: defaults.expires
+  };
+}
 const sessionOptions = {
   key: 'user_sid',
   secret: process.env.SECRET,
@@ -37,15 +44,18 @@ const sessionOptions = {
   },
   store: new SequelizeStore({
     db: db,
-    table: 'Session'
+    table: 'Session',
+    extendedDefaultFields: extendedDefaultFields
   })
 };
-//middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 //cookieparse
 app.use(cookieParser(process.env.SECRET));
-//express session
+//middleware to extract requests and exposing to req, without manually searching for them.
+//extented keyword allow you to have nested objects sent
+//dont need bodyparser package. Express has it included now after version 4.16.0
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+//express session. Options in object defined from line 29.
 app.use(session(sessionOptions));
 //passport
 app.use(passport.initialize());

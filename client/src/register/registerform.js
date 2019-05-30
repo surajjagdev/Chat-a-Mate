@@ -43,7 +43,7 @@ class Register extends React.Component {
   handleInput = e => {
     e.preventDefault();
     const { name, value } = e.target;
-    let formErrors = this.state.formErrors;
+    const formErrors = this.state.formErrors;
     //switch form case errors
     switch (name) {
       case 'firstName':
