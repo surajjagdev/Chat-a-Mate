@@ -4,10 +4,6 @@ const passport = require('passport');
 const express = require('express');
 const router = express.Router();
 const saltRounds = 10;
-router.post('/test', authenticationMiddleware(), (req, res) => {
-  const body = req.body;
-  console.log(body);
-});
 router.get('/api/users', (req, res, next) => {
   db.User.findAll({})
     .then(dbFindAll => {
@@ -43,8 +39,9 @@ router.post('/api/newuser', (req, res, next) => {
                 message: 'An error has occured. User has not been saved'
               });
             } else if (created && typeof userId !== 'undefined') {
-              req.login(userId, error => {
-                console.log('req.user: ', req.user);
+              req.login(userId, {}, error => {
+                // console.log('req.user: ', req);
+                console.log('hi: ', req.session.passport.user);
                 console.log('is authenticated: ', req.isAuthenticated());
                 if (!error) {
                   return res.json({
@@ -77,6 +74,9 @@ router.post('/api/newuser', (req, res, next) => {
       .json({ success: false, message: 'Error Missing Parameters' });
   }
 });
+router.get('/test', authenticationMiddleware(), (req, res) => {
+  return res.send('hi');
+});
 passport.serializeUser(function(userId, done) {
   console.log('from seralized userId: ', userId);
   done(null, userId);
@@ -87,16 +87,15 @@ passport.deserializeUser(function(userId, done) {
       console.log('\n\n\n\nFound User\n\n\n\n');
       done(null, user);
     } else {
-      return res.json({ error: 'Error deseralize' });
+      console.log('Unable to deseralize');
     }
   });
 });
 //authentication middleware
 function authenticationMiddleware() {
-  /* return (req, res, next) => {
-    console.log('req.session: ', req.session);
-    console.log('req.user: ', req.user);
-    console.log('req.userId: ', req.userId);
+  return (req, res, next) => {
+    console.log(req.session);
+    console.log(req.cookies);
     console.log('is authenticated middleware: ', req.isAuthenticated());
     if (req.isAuthenticated()) {
       return next();
@@ -109,9 +108,10 @@ function authenticationMiddleware() {
         })
         .status(404);
     }
-  };*/
-  return (req, res, next) => {
+  };
+  /*return (req, res, next) => {
     const user = req.signedCookies.user_sid;
+    console.log(req);
     console.log('user: ', user);
     db.Session.findOne({
       where: {
@@ -122,7 +122,7 @@ function authenticationMiddleware() {
         console.log(found);
         return res.json({
           auth: req.isAuthenticated(),
-          message: 'authenticated'
+          message: 'User not Found. Not authenticated.'
         });
       } else {
         return login(found.id);
@@ -145,7 +145,7 @@ function authenticationMiddleware() {
         }
       });
     }
-  };
+  };*/
 }
 
 //passport

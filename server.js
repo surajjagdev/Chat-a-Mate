@@ -11,8 +11,6 @@ const session = require('express-session');
 const passport = require('passport');
 const sequelize = require('sequelize');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
-//static file declaration
-app.use(express.static(path.join(__dirname, 'client/build')));
 //serve up static assets production
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
@@ -33,23 +31,36 @@ function extendedDefaultFields(defaults, session) {
     expires: defaults.expires
   };
 }
+//
+const cookieExpirationDate = new Date();
+const cookieExpirationDays = 365;
+cookieExpirationDate.setDate(
+  cookieExpirationDate.getDate() + cookieExpirationDays
+);
+
 const sessionOptions = {
-  key: 'user_sid',
-  secret: process.env.SECRET,
+  key: 'userId',
+  secret: /*process.env.SECRET*/ 'foo',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    maxAge: 30 * 24 * 60 * 60 * 1000, //1 month
-    secure: process.env.NODE_ENV === 'production' ? true : false
+    expires: cookieExpirationDate, //1 month
+    secure: process.env.NODE_ENV === 'production' ? true : false,
+    httpOnly: process.env.NODE_ENV === 'production' ? true : false
   },
   store: new SequelizeStore({
     db: db,
     table: 'Session',
+    checkExpirationInterval: 20 * 23 * 60 * 1000,
+    expiration: 30 * 24 * 60 * 60 * 1000, //1 month
     extendedDefaultFields: extendedDefaultFields
   })
 };
 //cookieparse
-app.use(cookieParser(process.env.SECRET));
+const secret = 'foo';
+app.use(cookieParser(secret));
+//static file declaration
+app.use(express.static(path.join(__dirname, 'client/build')));
 //middleware to extract requests and exposing to req, without manually searching for them.
 //extented keyword allow you to have nested objects sent
 //dont need bodyparser package. Express has it included now after version 4.16.0
@@ -60,7 +71,7 @@ app.use(session(sessionOptions));
 //passport
 app.use(passport.initialize());
 
-app.use(passport.session());
+app.use(passport.session(sessionOptions));
 app.use(routes);
 //use routes when made and connect to mysql
 db.sequelize.sync({ force: true }).then(() => {
