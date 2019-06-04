@@ -1,4 +1,6 @@
+//========================if production=====================================//
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
+//===========================require in modules============================================//
 const express = require('express');
 const app = express();
 const path = require('path');
@@ -11,19 +13,12 @@ const session = require('express-session');
 const passport = require('passport');
 const sequelize = require('sequelize');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
+//==============Production======================================///
 //serve up static assets production
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
-  /*app.get('*', (req, res) => {
-    res.sendFile(path.join((__dirname = './client/build/index.html')));*/
-  /*const index = path.join(__dirname, 'build', 'index.html');
-    res.sendFile(index);*/
-  //});
 }
-//build mode local
-/*app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname + '/client/public/index.html'));
-});*/
+//======================for passport and persistence=====================//
 //session options
 function extendedDefaultFields(defaults, session) {
   return {
@@ -37,14 +32,14 @@ const cookieExpirationDays = 365;
 cookieExpirationDate.setDate(
   cookieExpirationDate.getDate() + cookieExpirationDays
 );
-
 const sessionOptions = {
   key: 'userId',
   secret: /*process.env.SECRET*/ 'foo',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    expires: cookieExpirationDate, //1 month
+    expires: cookieExpirationDate, //1 month,
+    secureProxy: true,
     secure: process.env.NODE_ENV === 'production' ? true : false,
     httpOnly: process.env.NODE_ENV === 'production' ? true : false
   },
@@ -57,8 +52,7 @@ const sessionOptions = {
   })
 };
 //cookieparse
-const secret = 'foo';
-app.use(cookieParser(secret));
+app.use(cookieParser('foo'));
 //static file declaration
 app.use(express.static(path.join(__dirname, 'client/build')));
 //middleware to extract requests and exposing to req, without manually searching for them.
@@ -70,8 +64,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(session(sessionOptions));
 //passport
 app.use(passport.initialize());
-
-app.use(passport.session(sessionOptions));
+app.use(passport.session());
 app.use(routes);
 //use routes when made and connect to mysql
 db.sequelize.sync({ force: true }).then(() => {
