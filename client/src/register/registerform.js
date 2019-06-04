@@ -132,17 +132,16 @@ class Register extends React.Component {
           email: email,
           password: password
         }).then((data, error) => {
+          console.log(error);
           const success = data.data.success;
           if (success === true) {
             this.setState({ serverErrors: '' });
             console.log('success');
             console.log(data.data);
           } else if (success === false) {
-            const returnedErrors = data.data.errors.errors;
-            this.setState({ serverErrors: data.data.errors.errors });
+            let returnedErrors = data.data.errors.errors;
+            this.setState({ serverErrors: returnedErrors });
             console.log(returnedErrors);
-          } else if (error) {
-            console.log('complete error');
           } else {
             console.log('nothing');
           }
