@@ -15,14 +15,25 @@ router.get('/api/users', authenticationMiddleware(), (req, res, next) => {
       }
     });
 });
+/*router.post(
+  '/api/newuser',
+  passport.authenticate('local-signup', {
+    successRedirect: '/api/newuser/test',
+    failureRedirect: '/register'
+  }),
+  (req, res) => {
+    return res.json({
+      success: true,
+      data: created,
+      message: 'User successfully created'
+    });
+  }
+);*/
 router.post(
   '/api/newuser',
   checkAuthenticationMiddleware(),
   (req, res, next) => {
     //strip tags afterwards.
-    setTimeout(() => {
-      console.log(req.session);
-    }, 5000);
     const { first_name, last_name, email, password } = req.body;
     //strip html tags and remove uneccessary white spaces
     const stripTagsFunction = myString => {
@@ -55,7 +66,9 @@ router.post(
                 req.login(userId, {}, error => {
                   // console.log('req.user: ', req);
                   if (!error) {
-                    console.log(req.session);
+                    console.log('req.session.id :', req.session.id);
+                    const sessionId = req.session.id;
+                    req.session.id = sessionId;
                     return res.json({
                       success: true,
                       data: created,
@@ -108,11 +121,12 @@ passport.serializeUser(function(userId, done) {
   console.log('from seralized userId: ', userId);
   done(null, userId);
 });
+//============deseralize user if exists=======//
 passport.deserializeUser(function(userId, done) {
   db.User.findOne({ where: { id: userId } }).then(user => {
     if (user) {
       console.log('\n\n\n\nFound User\n\n\n\n');
-      done(null, user);
+      done(null, user.id);
     } else {
       console.log('Unable to deseralize');
     }
@@ -121,8 +135,9 @@ passport.deserializeUser(function(userId, done) {
 //authentication middleware
 function authenticationMiddleware() {
   return (req, res, next) => {
-    console.log(req.session);
-    console.log(req.cookies);
+    console.log('req.cookies: ', req.cookies);
+    console.log('req.session; ', req.session);
+    console.log('req.session.id :', req.session.id);
     console.log('is authenticated middleware: ', req.isAuthenticated());
     if (req.isAuthenticated()) {
       return next();
@@ -144,12 +159,9 @@ function authenticationMiddleware() {
 }
 function checkAuthenticationMiddleware() {
   return (req, res, next) => {
-    console.log(req.session);
-    console.log(req.cookies);
-    console.log(
-      'is authenticated via req.isAuthenticated: ',
-      req.isAuthenticated()
-    );
+    console.log('req.session; ', req.session);
+    console.log('req.cookies: ', req.cookies);
+    console.log('req.session.id: ', req.session.id);
     if (req.isAuthenticated()) {
       return res.json({
         success: false,
