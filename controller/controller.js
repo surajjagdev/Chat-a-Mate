@@ -4,6 +4,7 @@ const passport = require('passport');
 const express = require('express');
 const router = express.Router();
 const saltRounds = 10;
+//=========================Get all users===========================================//
 router.get('/api/users', authenticationMiddleware(), (req, res, next) => {
   db.User.findAll({})
     .then(dbFindAll => {
@@ -15,20 +16,7 @@ router.get('/api/users', authenticationMiddleware(), (req, res, next) => {
       }
     });
 });
-/*router.post(
-  '/api/newuser',
-  passport.authenticate('local-signup', {
-    successRedirect: '/api/newuser/test',
-    failureRedirect: '/register'
-  }),
-  (req, res) => {
-    return res.json({
-      success: true,
-      data: created,
-      message: 'User successfully created'
-    });
-  }
-);*/
+//======================New User Login============================================//
 router.post(
   '/api/newuser',
   checkAuthenticationMiddleware(),
@@ -39,106 +27,134 @@ router.post(
     const stripTagsFunction = myString => {
       return myString.replace(/(<([^>]+)>)/gi, '');
     };
-    if (first_name && last_name && email && password) {
-      bycrpt.hash(password, saltRounds, function(err, hash) {
-        if (!err) {
-          db.User.create({
-            first_name: stripTagsFunction(first_name.split(' ').join('')),
-            last_name: stripTagsFunction(last_name.split(' ').join('')),
-            email: stripTagsFunction(email.split(' ').join('')),
-            password: hash
-          })
-            .then(created => {
-              const userId = created.id;
-              if (!created) {
-                return res.status(400).json({
-                  success: false,
-                  errors: {
-                    errors: [
-                      {
-                        message: 'An error has occured. User has not been saved'
-                      }
-                    ]
-                  },
-                  message: 'An error has occured. User has not been saved'
-                });
-              } else if (created && typeof userId !== 'undefined') {
-                req.login(userId, {}, error => {
-                  // console.log('req.user: ', req);
-                  if (!error) {
-                    console.log('req.session.id :', req.session.id);
-                    const sessionId = req.session.id;
-                    req.session.id = sessionId;
-                    return res.json({
-                      success: true,
-                      data: created,
-                      message: 'User successfully created'
-                    });
-                  } else {
-                    return res.json({
-                      success: false,
-                      errors: {
-                        errors: [{ message: 'corrupted seralization' }]
-                      },
-                      message: 'User created Successfully, but not seralized'
-                    });
-                  }
-                });
+    db.User.findOne({
+      where: {
+        email: email
+      }
+    }).then(user => {
+      if (user === null) {
+        continueRegister();
+      } else {
+        return res.json({
+          success: false,
+          user: { firstName: user.first_name, lastName: user.last_name },
+          errors: {
+            errors: [
+              {
+                message: 'Email already exists in database. Please login in.'
               }
+            ]
+          },
+          message: 'Email already in use.'
+        });
+      }
+    });
+    function continueRegister() {
+      if (first_name && last_name && email && password) {
+        bycrpt.hash(password, saltRounds, function(err, hash) {
+          if (!err) {
+            db.User.create({
+              first_name: stripTagsFunction(first_name.split(' ').join('')),
+              last_name: stripTagsFunction(last_name.split(' ').join('')),
+              email: stripTagsFunction(email.split(' ').join('')),
+              password: hash
             })
-            .catch(error => {
-              if (error) {
-                return res.json({
-                  success: false,
-                  errors: {
-                    errors: [{ message: JSON.stringify(error) }]
-                  },
-                  message: 'Error Caught on Server. Please Try again.'
-                });
-              }
+              .then(created => {
+                const userId = created.id;
+                if (!created) {
+                  return res.status(400).json({
+                    success: false,
+                    errors: {
+                      errors: [
+                        {
+                          message:
+                            'An error has occured. User has not been saved'
+                        }
+                      ]
+                    },
+                    message: 'An error has occured. User has not been saved'
+                  });
+                } else if (created && typeof userId !== 'undefined') {
+                  req.login(userId, {}, error => {
+                    // console.log('req.user: ', req);
+                    if (!error) {
+                      console.log('req.session.id :', req.session.id);
+                      const sessionId = req.session.id;
+                      req.session.id = sessionId;
+                      return res.json({
+                        success: true,
+                        data: created,
+                        message: 'User successfully created'
+                      });
+                    } else {
+                      return res.json({
+                        success: false,
+                        errors: {
+                          errors: [{ message: 'corrupted seralization' }]
+                        },
+                        message: 'User created Successfully, but not seralized'
+                      });
+                    }
+                  });
+                }
+              })
+              .catch(error => {
+                if (error) {
+                  return res.json({
+                    success: false,
+                    errors: {
+                      errors: [{ message: JSON.stringify(error) }]
+                    },
+                    message: 'Error Caught on Server. Please Try again.'
+                  });
+                }
+              });
+          } else {
+            res.json({
+              success: false,
+              errors: { errors: [{ error: err, message: 'Hash failed' }] },
+              message: 'Hash Failed'
             });
-        } else {
-          res.json({
-            success: false,
-            errors: { errors: [{ error: err, message: 'Hash failed' }] },
-            message: 'Hash Failed'
-          });
-        }
-      });
-    } else {
-      res.status(400).json({
-        success: false,
-        errors: { errors: [{ message: 'Error Missing Parameters' }] },
-        message: 'Error Missing Parameters'
-      });
+          }
+        });
+      } else {
+        res.status(400).json({
+          success: false,
+          errors: { errors: [{ message: 'Error Missing Parameters' }] },
+          message: 'Error Missing Parameters'
+        });
+      }
     }
   }
 );
 router.get('/api/newuser/test', authenticationMiddleware(), (req, res) => {
   return res.send('hi');
 });
+//=========seralize and deseralize user for persistance========================//
 passport.serializeUser(function(userId, done) {
   console.log('from seralized userId: ', userId);
   done(null, userId);
 });
 //============deseralize user if exists=======//
 passport.deserializeUser(function(userId, done) {
-  db.User.findOne({ where: { id: userId } }).then(user => {
-    if (user) {
-      console.log('\n\n\n\nFound User\n\n\n\n');
-      done(null, user.id);
-    } else {
-      console.log('Unable to deseralize');
-    }
-  });
+  db.User.findOne({ where: { id: userId } })
+    .then(user => {
+      if (user) {
+        console.log('\nFound User\n');
+        done(null, user.id);
+      } else {
+        console.log('Unable to deseralize');
+      }
+    })
+    .catch(error => {
+      if (error) {
+        console.log(error);
+      }
+    });
 });
-//authentication middleware
+//====================Check if user is logged in. If not make them login==============================//
 function authenticationMiddleware() {
   return (req, res, next) => {
-    console.log('req.cookies: ', req.cookies);
-    console.log('req.session; ', req.session);
-    console.log('req.session.id :', req.session.id);
-    console.log('is authenticated middleware: ', req.isAuthenticated());
     if (req.isAuthenticated()) {
       return next();
     } else {
@@ -152,16 +168,15 @@ function authenticationMiddleware() {
             }
           ]
         },
-        message: 'unsuccessfull login process'
+        message: 'unsuccessfull login process. You are not logged in.'
       });
     }
   };
 }
+//=======================Register Middleware========================================//
+//Check if user exists in database. If Not register them. If so deny registeration.
 function checkAuthenticationMiddleware() {
   return (req, res, next) => {
-    console.log('req.session; ', req.session);
-    console.log('req.cookies: ', req.cookies);
-    console.log('req.session.id: ', req.session.id);
     if (req.isAuthenticated()) {
       return res.json({
         success: false,
@@ -177,11 +192,9 @@ function checkAuthenticationMiddleware() {
         message: 'Already Logged in'
       });
     } else {
-      console.log('returning next. User DNE');
+      console.log('Returning next. User does not exist in database.');
       return next();
     }
   };
 }
-
-//passport
 module.exports = router;
