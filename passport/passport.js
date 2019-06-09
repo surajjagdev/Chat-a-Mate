@@ -1,6 +1,6 @@
 const LocalStrategy = require('passport-local').Strategy;
 const bycrpt = require('bcrypt');
-const db = require('./models');
+const db = require('../models');
 const myLocalConfiguration = passport => {
   //=================================================//
   //passport setup/////////////////////====================//
@@ -15,7 +15,7 @@ const myLocalConfiguration = passport => {
     db.User.findOne({ where: { id: userId } }).then(user => {
       if (user) {
         console.log('\n\n\n\nFound User\n\n\n\n');
-        done(null, user);
+        done(null, userId);
       } else {
         console.log('Unable to deseralize');
       }
@@ -73,7 +73,7 @@ const myLocalConfiguration = passport => {
       (req, email, password, done) => {
         //strip tags afterwards.
         const saltRounds = 10;
-        const { first_name, last_name, email, password } = req.body;
+        const { first_name, last_name } = req.body;
         //strip html tags and remove uneccessary white spaces
         const stripTagsFunction = myString => {
           return myString.replace(/(<([^>]+)>)/gi, '');
@@ -84,21 +84,133 @@ const myLocalConfiguration = passport => {
         process.nextTick(() => {
           //if user not logged in
           if (!req.user) {
-            db.User.findOne({ 'local.email': email }).then((user, err) => {
+            db.User.findOne({
+              where: { email: email }
+            }).then((user, err) => {
               if (err) {
                 return done(err);
-              }
-              //check if user is in db
-              if (user) {
-                return done(null, false);
               } else {
-                if (first_name && last_name && email && password) {
+                if (
+                  first_name &&
+                  last_name &&
+                  email &&
+                  password &&
+                  !user &&
+                  !err
+                ) {
+                  bycrpt.hash(password, saltRounds, function(error, hash) {
+                    if (!error) {
+                      db.User.create({
+                        first_name: stripTagsFunction(
+                          first_name.split(' ').join('')
+                        ),
+                        last_name: stripTagsFunction(
+                          last_name.split(' ').join('')
+                        ),
+                        email: stripTagsFunction(email.split(' ').join('')),
+                        password: hash
+                      }).then(created => {
+                        if (created) {
+                          let userId = created.id;
+                          return done(null, userId);
+                        }
+                      });
+                    }
+                  });
                 }
               }
             });
+          } else if (!req.user.email) {
+            //if user logged in but no local account
+            db.User.findOne({
+              where: {
+                email: email
+              }
+            }).then((user, err) => {
+              if (err) {
+                return done(err);
+              }
+              if (user) {
+                return done(null, false);
+              } else {
+                let user = req.user;
+                user.local.email = email;
+                bycrpt.hash(password, saltRounds, function(errors, hash) {
+                  if (!errors) {
+                    db.User.create({
+                      first_name: 'Change Name',
+                      last_name: 'Change Name',
+                      email: email,
+                      password: hash
+                    }).then(created => {
+                      if (created) {
+                        let userId = created.id;
+                        return done(null, userId);
+                      }
+                    });
+                  }
+                });
+              }
+            });
+          } else {
+            //user logged in
+
+            return done(null, req.userId);
           }
         });
       }
     )
   );
+  function authenticationMiddleware() {
+    return (req, res, next) => {
+      console.log(req.session);
+      console.log(req.cookies);
+      console.log('is authenticated middleware: ', req.isAuthenticated());
+      if (req.isAuthenticated()) {
+        return next();
+      } else {
+        return res.json({
+          success: false,
+          error: true,
+          errors: {
+            errors: [
+              {
+                message: 'Unsuccessfull login authorized. Please Log back in.'
+              }
+            ]
+          },
+          message: 'unsuccessfull login process'
+        });
+      }
+    };
+  }
+  function checkAuthenticationMiddleware() {
+    return (req, res, next) => {
+      console.log(req.session);
+      console.log(req.cookies);
+      console.log(
+        'is authenticated via req.isAuthenticated: ',
+        req.isAuthenticated()
+      );
+      if (req.isAuthenticated()) {
+        return res.json({
+          success: false,
+          error: true,
+          errors: {
+            errors: [
+              {
+                message:
+                  'User Already exists in Database. Cannot Register. Try Logging in.'
+              }
+            ]
+          },
+          message: 'Already Logged in'
+        });
+      } else {
+        console.log('returning next. User DNE');
+        return next();
+      }
+    };
+  }
 };
+module.exports = myLocalConfiguration;
