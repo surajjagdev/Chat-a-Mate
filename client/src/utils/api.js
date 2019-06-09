@@ -7,5 +7,8 @@ export default {
   //create a new user
   newuser: data => {
     return axios.post('/api/newuser', data);
+  },
+  test: () => {
+    return axios.get('/api/newuser/test');
   }
 };
