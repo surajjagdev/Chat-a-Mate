@@ -33,7 +33,7 @@ cookieExpirationDate.setDate(
   cookieExpirationDate.getDate() + cookieExpirationDays
 );
 const sessionOptions = {
-  key: 'userId',
+  name: 'backend',
   secret: /*process.env.SECRET*/ 'foo',
   resave: false,
   saveUninitialized: false,
@@ -51,6 +51,8 @@ const sessionOptions = {
     extendedDefaultFields: extendedDefaultFields
   })
 };
+//require('./passport/passport')(passport);
+//configuration==============================================//
 //cookieparse
 app.use(cookieParser('foo'));
 //static file declaration
@@ -65,7 +67,9 @@ app.use(session(sessionOptions));
 //passport
 app.use(passport.initialize());
 app.use(passport.session());
+//=========================routes===========================//
 app.use(routes);
+//================port server=============================///
 //use routes when made and connect to mysql
 db.sequelize.sync({ force: true }).then(() => {
   app.listen(PORT, () => {
