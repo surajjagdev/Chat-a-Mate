@@ -10,5 +10,8 @@ export default {
   },
   test: () => {
     return axios.get('/api/newuser/test');
+  },
+  login: data => {
+    return axios.post('/api/user/login', data);
   }
 };
