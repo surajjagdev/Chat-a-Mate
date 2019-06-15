@@ -49,6 +49,7 @@ router.post(
         });
       }
     });
+    //register the user. hash password and log them in.
     function continueRegister() {
       if (first_name && last_name && email && password) {
         bycrpt.hash(password, saltRounds, function(err, hash) {
@@ -127,30 +128,20 @@ router.post(
     }
   }
 );
+//================Testing middleware route===============================//
 router.get('/api/newuser/test', authenticationMiddleware(), (req, res) => {
   return res.send('hi');
 });
-//=========seralize and deseralize user for persistance========================//
-passport.serializeUser(function(userId, done) {
-  console.log('from seralized userId: ', userId);
-  done(null, userId);
-});
-//============deseralize user if exists=======//
-passport.deserializeUser(function(userId, done) {
-  db.User.findOne({ where: { id: userId } })
-    .then(user => {
-      if (user) {
-        console.log('\nFound User\n');
-        done(null, user.id);
-      } else {
-        console.log('Unable to deseralize');
-      }
-    })
-    .catch(error => {
-      if (error) {
-        console.log(error);
-      }
-    });
+//===================Login in User========================================//
+router.post(
+  '/api/user/login',
+  passport.authenticate('local-login', {
+    successRedirect: '/test',
+    failureRedirect: '/failure'
+  })
+);
+router.get('/test', (req, res) => {
+  return res.json({ success: true });
 });
 //====================Check if user is logged in. If not make them login==============================//
 function authenticationMiddleware() {
