@@ -11,6 +11,7 @@ const routes = require('./controller/controller');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 const sequelize = require('sequelize');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 //==============Production======================================///
@@ -51,7 +52,6 @@ const sessionOptions = {
     extendedDefaultFields: extendedDefaultFields
   })
 };
-//require('./passport/passport')(passport);
 //configuration==============================================//
 //cookieparse
 app.use(cookieParser('foo'));
@@ -67,11 +67,13 @@ app.use(session(sessionOptions));
 //passport
 app.use(passport.initialize());
 app.use(passport.session());
+//==========local passport login===========================//
 //=========================routes===========================//
+require('./passport/passport')(passport);
 app.use(routes);
 //================port server=============================///
 //use routes when made and connect to mysql
-db.sequelize.sync({ force: true }).then(() => {
+db.sequelize.sync().then(() => {
   app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
   });
