@@ -76,22 +76,33 @@ class Register extends React.Component {
     this.setState({ formErrors, [name]: value });
   };
   signIn = e => {
-    /* e.preventDefault();
+    e.preventDefault();
     if (
       this.state.userName !== '' &&
-      (this.state.userPassword !== '' && this.state.userPassword.length > 5)
+      this.state.userName.length > 1 &&
+      this.state.userPassword !== '' &&
+      this.state.userPassword.length > 1
     ) {
       console.log(
         `userName: ${this.state.userName}\n userPassword: ${
           this.state.userPassword
         }`
       );
+      API.login({
+        userName: this.state.userName,
+        userPassword: this.state.userPassword
+      })
+        .then(data => {
+          console.log(data);
+        })
+        .catch(error => {
+          if (error) {
+            console.log(error);
+          }
+        });
     } else {
       alert('enter valid userName and password');
-    }*/
-    API.test().then(data => {
-      console.log(data);
-    });
+    }
   };
   //submit form
   //upper case first letter, dont allow null
