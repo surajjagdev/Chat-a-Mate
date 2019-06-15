@@ -27,8 +27,8 @@ const myLocalConfiguration = passport => {
     new LocalStrategy(
       {
         //passport uses user and pass by default. set to email and pass====//
-        usernameField: 'email',
-        passwordField: 'password',
+        usernameField: 'userName',
+        passwordField: 'userPassword',
         passReqToCallback: true //pass in request from route to c if user is logged in or not
       },
       (req, email, password, done) => {
@@ -38,7 +38,7 @@ const myLocalConfiguration = passport => {
         process.nextTick(() => {
           db.User.findOne({
             where: {
-              'local.email': email
+              email: email
             }
           }).then((user, err) => {
             //if err
@@ -47,14 +47,21 @@ const myLocalConfiguration = passport => {
               return done(err);
             }
             //if no user found
-            if (!user) {
+            if (!user || user.length === 0 || user == null) {
               return done(null, false);
             }
-            if (!user.validPassword(password)) {
-              return done(null, false);
-            } else {
-              return done(null, user);
-            }
+            const hash = user.password_hash.toString();
+            console.log(user.id);
+            bycrpt.compare(password, hash, function(err, response) {
+              if (err) {
+                return done(null, false);
+              }
+              if (response === true) {
+                return done(null, user.id);
+              } else {
+                return done(null, false);
+              }
+            });
           });
         });
       }
@@ -161,56 +168,6 @@ const myLocalConfiguration = passport => {
       }
     )
   );
-  function authenticationMiddleware() {
-    return (req, res, next) => {
-      console.log(req.session);
-      console.log(req.cookies);
-      console.log('is authenticated middleware: ', req.isAuthenticated());
-      if (req.isAuthenticated()) {
-        return next();
-      } else {
-        return res.json({
-          success: false,
-          error: true,
-          errors: {
-            errors: [
-              {
-                message: 'Unsuccessfull login authorized. Please Log back in.'
-              }
-            ]
-          },
-          message: 'unsuccessfull login process'
-        });
-      }
-    };
-  }
-  function checkAuthenticationMiddleware() {
-    return (req, res, next) => {
-      console.log(req.session);
-      console.log(req.cookies);
-      console.log(
-        'is authenticated via req.isAuthenticated: ',
-        req.isAuthenticated()
-      );
-      if (req.isAuthenticated()) {
-        return res.json({
-          success: false,
-          error: true,
-          errors: {
-            errors: [
-              {
-                message:
-                  'User Already exists in Database. Cannot Register. Try Logging in.'
-              }
-            ]
-          },
-          message: 'Already Logged in'
-        });
-      } else {
-        console.log('returning next. User DNE');
-        return next();
-      }
-    };
-  }
 };
+
 module.exports = myLocalConfiguration;
