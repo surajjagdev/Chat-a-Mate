@@ -8,6 +8,8 @@ import {
 } from 'react-router-dom';
 import Register from '../register/registerform';
 import ProtectedRoute from '../auth/protectroute.js';
+import auth from '../auth/auth.js';
+import API from '../utils/api.js';
 import './App.css';
 
 class App extends React.Component {
@@ -16,7 +18,8 @@ class App extends React.Component {
       <Router>
         <Switch>
           <Route exact path="/" component={Register} />
-          <ProtectedRoute exact path="/profile" component={Other} />
+          <ProtectedRoute exact path="/test" component={Other} />
+          <ProtectedRoute exact path="/profile" component={Test} />
           <Route path="*" component={() => '404 NOT FOUND!'} />
         </Switch>
       </Router>
@@ -24,7 +27,24 @@ class App extends React.Component {
   }
 }
 const Other = () => {
-  return <div>Hi</div>;
+  return (
+    <div>
+      Hi
+      <Link to="/profile">
+        <div>Profile {auth.isAuthenticated()}</div>
+      </Link>
+    </div>
+  );
+};
+const Test = () => {
+  return (
+    <Link to="/test">
+      <div>
+        Test
+        {auth.isAuthenticated()}
+      </div>
+    </Link>
+  );
 };
 
 export default App;

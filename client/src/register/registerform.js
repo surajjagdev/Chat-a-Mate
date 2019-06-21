@@ -21,12 +21,21 @@ class Register extends React.Component {
     }
   };
   componentDidMount() {
-    console.log(auth.isAuthenticated());
+    setTimeout(() => {
+      if (auth.isAuthenticated() === true) {
+        return this.props.history.push('/profile');
+      }
+    }, 1000);
+  }
+  /*componentDidMount() {
+    console.log('auth: ', auth.isAuthenticated());
     auth.checkAuth(() => {
       API.checkauth()
         .then(data => {
           if (data.data.success === true) {
-            return this.props.history.push('/profile');
+            return console.log('hi');
+
+            // this.props.history.push('/profile');
           }
         })
         .catch(error => {
@@ -35,7 +44,7 @@ class Register extends React.Component {
           }
         });
     });
-  }
+  }*/
   formValid = (formErrors, ...rest) => {
     let valid = true;
     //valid form errors being empty

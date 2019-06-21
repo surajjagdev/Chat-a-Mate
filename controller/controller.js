@@ -150,6 +150,7 @@ router.get(
 );
 router.get('/api/auth/user/failure', authenticationMiddleware());
 router.get('/api/auth/user/success', (req, res) => {
+  console.log('req.session.passport: ', req.session.passport);
   return res.json({
     success: true,
     errors: null,
