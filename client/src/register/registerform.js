@@ -104,6 +104,10 @@ class Register extends React.Component {
       alert('enter valid userName and password');
     }
   };
+  logout = e => {
+    e.preventDefault();
+    API.logout();
+  };
   //submit form
   //upper case first letter, dont allow null
   //strip html tags and then check length
