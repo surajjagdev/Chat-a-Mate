@@ -16,5 +16,8 @@ export default {
   },
   logout: () => {
     return axios.get('/api/user/logout');
+  },
+  checkauth: () => {
+    return axios.get('/api/auth/user/authcheck');
   }
 };
