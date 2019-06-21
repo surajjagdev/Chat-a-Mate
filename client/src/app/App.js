@@ -3,19 +3,22 @@ import {
   BrowserRouter as Router,
   Route,
   Link,
-  Redirect
+  Redirect,
+  Switch
 } from 'react-router-dom';
 import Register from '../register/registerform';
+import ProtectedRoute from '../auth/protectroute.js';
 import './App.css';
 
 class App extends React.Component {
   render() {
     return (
       <Router>
-        <div>
+        <Switch>
           <Route exact path="/" component={Register} />
-          <Route exact path="/test" component={Other} />
-        </div>
+          <ProtectedRoute exact path="/profile" component={Other} />
+          <Route path="*" component={() => '404 NOT FOUND!'} />
+        </Switch>
       </Router>
     );
   }
