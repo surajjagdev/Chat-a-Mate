@@ -3,6 +3,7 @@ import Logo from '../logo/logo.js';
 import { Link } from 'react-router-dom';
 import API from '../utils/api.js';
 import './registerForm.css';
+import auth from '../auth/auth.js';
 class Register extends React.Component {
   state = {
     userName: '',
@@ -19,6 +20,22 @@ class Register extends React.Component {
       password: ''
     }
   };
+  componentDidMount() {
+    console.log(auth.isAuthenticated());
+    auth.checkAuth(() => {
+      API.checkauth()
+        .then(data => {
+          if (data.data.success === true) {
+            return this.props.history.push('/profile');
+          }
+        })
+        .catch(error => {
+          if (error) {
+            console.log(error);
+          }
+        });
+    });
+  }
   formValid = (formErrors, ...rest) => {
     let valid = true;
     //valid form errors being empty
@@ -88,25 +105,41 @@ class Register extends React.Component {
           this.state.userPassword
         }`
       );
-      API.login({
-        userName: this.state.userName,
-        userPassword: this.state.userPassword
-      })
-        .then(data => {
-          console.log(data);
+      auth.login(() => {
+        API.login({
+          userName: this.state.userName,
+          userPassword: this.state.userPassword
         })
-        .catch(error => {
-          if (error) {
-            console.log(error);
-          }
-        });
+          .then(data => {
+            if (data.data.success === true) {
+              this.setState({ serverErrors: '' });
+              this.props.history.push('/profile');
+            }
+            if (data.data.success === false) {
+              this.setState({ serverErrors: data.data.errors.errors });
+            }
+          })
+          .catch(error => {
+            if (error) {
+              const uncaughtError = {
+                message: 'Uncaught Error. Please Try again later'
+              };
+              this.setState({ serverErrors: uncaughtError });
+            }
+          });
+      });
     } else {
-      alert('enter valid userName and password');
+      this.setState({
+        serverErrors: [{ message: 'Please enter a valid username password' }]
+      });
     }
   };
   logout = e => {
-    e.preventDefault();
-    API.logout();
+    /*e.preventDefault();
+    API.logout();*/
+    auth.logout(() => {
+      this.props.history.push('/');
+    });
   };
   //submit form
   //upper case first letter, dont allow null
@@ -211,8 +244,7 @@ class Register extends React.Component {
             ? this.state.serverErrors.map((error, index) => {
                 return (
                   <span key={index} className="errorMessage">
-                    Error: {error.message}. Please make appropriate changes
-                    before resubmission.
+                    {error.message}.
                   </span>
                 );
               })
