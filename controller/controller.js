@@ -131,14 +131,25 @@ router.post(
 //===================Login in User========================================//
 router.post(
   '/api/user/login',
-  checkAuthenticationMiddleware(),
+  checkAuthenticationLogin(),
   passport.authenticate('local-login', {
     successRedirect: '/api/auth/user/success',
     failureRedirect: '/api/auth/user/failure'
   })
 );
+router.get(
+  '/api/auth/user/authcheck',
+  authenticationMiddleware(),
+  (req, res) => {
+    return res.json({
+      success: true,
+      errors: null,
+      user: req.session.passport.user
+    });
+  }
+);
 router.get('/api/auth/user/failure', authenticationMiddleware());
-router.get('/api/auth/user/success', authenticationMiddleware(), (req, res) => {
+router.get('/api/auth/user/success', (req, res) => {
   return res.json({
     success: true,
     errors: null,
@@ -162,12 +173,31 @@ function authenticationMiddleware() {
         errors: {
           errors: [
             {
-              message: 'Unsuccessfull login authorized. Please Log back in.'
+              message: 'Incorrect username and/ or password. Please try again'
             }
           ]
         },
         message: 'unsuccessfull login process. You are not logged in.'
       });
+    }
+  };
+}
+function checkAuthenticationLogin() {
+  return (req, res, next) => {
+    if (req.isAuthenticated()) {
+      return res.json({
+        success: false,
+        error: true,
+        errors: {
+          errors: [
+            {
+              message: 'User is Already Logged in'
+            }
+          ]
+        }
+      });
+    } else {
+      return next();
     }
   };
 }
