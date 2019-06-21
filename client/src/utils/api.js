@@ -13,5 +13,8 @@ export default {
   },
   login: data => {
     return axios.post('/api/user/login', data);
+  },
+  logout: () => {
+    return axios.get('/api/user/logout');
   }
 };
