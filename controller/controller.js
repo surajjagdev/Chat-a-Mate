@@ -128,10 +128,6 @@ router.post(
     }
   }
 );
-//================Testing middleware route===============================//
-router.get('/api/newuser/test', authenticationMiddleware(), (req, res) => {
-  return res.send('hi');
-});
 //===================Login in User========================================//
 router.post(
   '/api/user/login',
@@ -140,8 +136,10 @@ router.post(
     failureRedirect: '/failure'
   })
 );
-router.get('/test', (req, res) => {
-  return res.json({ success: true });
+router.get('/api/user/logout', authenticationMiddleware(), (req, res) => {
+  //logout
+  req.logOut();
+  req.session.destroy();
 });
 //====================Check if user is logged in. If not make them login==============================//
 function authenticationMiddleware() {
