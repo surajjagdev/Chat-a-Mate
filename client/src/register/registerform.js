@@ -27,24 +27,6 @@ class Register extends React.Component {
       }
     }, 1000);
   }
-  /*componentDidMount() {
-    console.log('auth: ', auth.isAuthenticated());
-    auth.checkAuth(() => {
-      API.checkauth()
-        .then(data => {
-          if (data.data.success === true) {
-            return console.log('hi');
-
-            // this.props.history.push('/profile');
-          }
-        })
-        .catch(error => {
-          if (error) {
-            console.log(error);
-          }
-        });
-    });
-  }*/
   formValid = (formErrors, ...rest) => {
     let valid = true;
     //valid form errors being empty
@@ -186,32 +168,41 @@ class Register extends React.Component {
         password.length >= 7 &&
         password.length < 20
       ) {
-        API.newuser({
-          first_name: firstName,
-          last_name: lastName,
-          email: email,
-          password: password
-        }).then((data, error) => {
-          console.log(error);
-          const success = data.data.success;
-          if (success === true) {
-            this.setState({ serverErrors: '' });
-            console.log('success');
-            console.log(data.data);
-          } else if (success === false) {
-            let returnedErrors = data.data.errors.errors;
-            this.setState({ serverErrors: returnedErrors });
-            console.log(returnedErrors);
-          } else {
-            console.log('nothing');
-          }
+        auth.newuser(() => {
+          API.newuser({
+            first_name: firstName,
+            last_name: lastName,
+            email: email,
+            password: password
+          })
+            .then(data => {
+              const success = data.data.success;
+              if (success === true) {
+                this.setState({ serverErrors: '' });
+                this.props.history.push('/profile');
+              } else if (success === false) {
+                let returnedErrors = data.data.errors.errors;
+                this.setState({ serverErrors: returnedErrors });
+              }
+            })
+            .catch(error => {
+              if (error) {
+                this.setState({
+                  serverErrors: 'Server error. Please try again later.'
+                });
+              }
+            });
         });
+        //
       } else {
         this.setState({ serverErrors: '' });
-        alert('Error');
       }
     } else {
-      alert('Error in form. Please fix it.');
+      this.setState({
+        serverErrors: [
+          { message: 'Please ensure registeration form is filled out.' }
+        ]
+      });
     }
   };
   render() {
