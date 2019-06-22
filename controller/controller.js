@@ -85,6 +85,7 @@ router.post(
                       return res.json({
                         success: true,
                         data: created,
+                        user: created.id,
                         message: 'User successfully created'
                       });
                     } else {
@@ -149,12 +150,12 @@ router.get(
   }
 );
 router.get('/api/auth/user/failure', authenticationMiddleware());
-router.get('/api/auth/user/success', (req, res) => {
-  console.log('req.session.passport: ', req.session.passport);
+router.get('/api/auth/user/success', ensureUserMiddleware(), (req, res) => {
+  console.log('req.session.passport: ', req.session);
   return res.json({
     success: true,
     errors: null,
-    user: req.session.passport.user
+    user: req.session.passport
   });
 });
 router.get('/api/user/logout', authenticationMiddleware(), (req, res) => {
@@ -199,6 +200,20 @@ function checkAuthenticationLogin() {
       });
     } else {
       return next();
+    }
+  };
+}
+function ensureUserMiddleware() {
+  return (req, res, next) => {
+    if (req.isAuthenticated()) {
+      return next();
+    } else {
+      return res.json({
+        success: false,
+        errors: {
+          errors: [{ message: 'Time Out' }]
+        }
+      });
     }
   };
 }
