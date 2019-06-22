@@ -18,6 +18,7 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 //serve up static assets production
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
+  app.enable('trust-proxy'); //for securing cookies
 }
 //======================for passport and persistence=====================//
 //session options
