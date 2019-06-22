@@ -20,9 +20,13 @@ class Auth {
         }
       });
   }
+  newuser(user) {
+    user();
+    this.authenticated = true;
+  }
   login(login) {
     login();
-    this.checkAuth();
+    this.authenticated = true;
   }
   logout(logout) {
     this.authenticated = false;
