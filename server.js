@@ -36,7 +36,7 @@ cookieExpirationDate.setDate(
 );
 const sessionOptions = {
   name: 'backend',
-  secret: /*process.env.SECRET*/ 'foo',
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -56,7 +56,7 @@ const sessionOptions = {
 };
 //configuration==============================================//
 //cookieparse
-app.use(cookieParser('foo'));
+app.use(cookieParser(process.env.secret));
 //static file declaration
 app.use(express.static(path.join(__dirname, 'client/build')));
 //middleware to extract requests and exposing to req, without manually searching for them.
