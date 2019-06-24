@@ -56,7 +56,7 @@ const sessionOptions = {
 };
 //configuration==============================================//
 //cookieparse
-app.use(cookieParser(process.env.secret));
+app.use(cookieParser(process.env.SECRET));
 //static file declaration
 app.use(express.static(path.join(__dirname, 'client/build')));
 //middleware to extract requests and exposing to req, without manually searching for them.
