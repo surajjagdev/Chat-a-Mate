@@ -9,10 +9,10 @@ class Register extends React.Component {
   state = {
     userName: '',
     userPassword: '',
-    firstName: null,
-    lastName: null,
-    email: null,
-    password: null,
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
     serverErrors: '',
     isLoading: false,
     formErrors: {
@@ -23,11 +23,33 @@ class Register extends React.Component {
     }
   };
   componentDidMount() {
-    setTimeout(() => {
-      if (auth.isAuthenticated() === true) {
-        return this.props.history.push('/profile');
+    this.setState(
+      prevState => ({
+        isLoading: !prevState.isLoading
+      }),
+      () => {
+        authUser();
       }
-    }, 1000);
+    );
+    const authUser = () => {
+      setTimeout(() => {
+        if (auth.isAuthenticated() === true) {
+          this.setState(
+            prevState => ({ isLoading: !prevState.isLoading }),
+            () => {
+              return this.props.history.push('/profile');
+            }
+          );
+        } else {
+          this.setState(
+            prevState => ({ isLoading: !prevState.isLoading }),
+            () => {
+              console.log('isLoading: ', this.state.isLoading);
+            }
+          );
+        }
+      }, 1000);
+    };
   }
   formValid = (formErrors, ...rest) => {
     let valid = true;
@@ -37,7 +59,7 @@ class Register extends React.Component {
     });
     //validate form was filled out
     Object.values(rest).forEach(val => {
-      val === null && (valid = false);
+      val === '' && (valid = false);
     });
     return valid;
   };
@@ -93,37 +115,55 @@ class Register extends React.Component {
       this.state.userPassword !== '' &&
       this.state.userPassword.length > 1
     ) {
-      console.log(
-        `userName: ${this.state.userName}\n userPassword: ${
-          this.state.userPassword
-        }`
+      this.setState(
+        prevState => ({ isLoading: !prevState.isLoading }),
+        () => {
+          return siginInCallback();
+        }
       );
-      auth.login(() => {
-        API.login({
-          userName: this.state.userName,
-          userPassword: this.state.userPassword
-        })
-          .then(data => {
-            if (data.data.success === true) {
-              this.setState({ serverErrors: '' });
-              this.props.history.push('/profile');
-            }
-            if (data.data.success === false) {
-              this.setState({ serverErrors: data.data.errors.errors });
-            }
+      let siginInCallback = () => {
+        auth.login(() => {
+          API.login({
+            userName: this.state.userName,
+            userPassword: this.state.userPassword
           })
-          .catch(error => {
-            if (error) {
-              const uncaughtError = {
-                message: 'Uncaught Error. Please Try again later'
-              };
-              this.setState({ serverErrors: uncaughtError });
-            }
-          });
-      });
+            .then(data => {
+              if (data.data.success === true) {
+                this.setState(
+                  prevState => ({
+                    serverErrors: '',
+                    userName: '',
+                    userPassword: '',
+                    isLoading: !prevState.isLoading
+                  }),
+                  () => {
+                    return this.props.history.push('/profile');
+                  }
+                );
+              }
+              if (data.data.success === false) {
+                this.setState(prevState => ({
+                  serverErrors: data.data.errors.errors,
+                  userPassword: '',
+                  isLoading: !prevState.isLoading
+                }));
+              }
+            })
+            .catch(error => {
+              if (error) {
+                const uncaughtError = {
+                  message: 'Uncaught Error. Please Try again later'
+                };
+                this.setState({ serverErrors: uncaughtError });
+              }
+            });
+        });
+      };
     } else {
       this.setState({
-        serverErrors: [{ message: 'Please enter a valid username password' }]
+        serverErrors: [
+          { message: 'Please enter a valid username and/or password' }
+        ]
       });
     }
   };
@@ -144,7 +184,11 @@ class Register extends React.Component {
       this.state.firstName !== null &&
       this.state.lastName !== null &&
       this.state.email !== null &&
-      this.state.password !== null
+      this.state.password !== null &&
+      this.state.firstName !== '' &&
+      this.state.lastName !== '' &&
+      this.state.email !== '' &&
+      this.state.password !== ''
     ) {
       const upperCase = string => {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -170,31 +214,54 @@ class Register extends React.Component {
         password.length >= 7 &&
         password.length < 20
       ) {
-        auth.newuser(() => {
-          API.newuser({
-            first_name: firstName,
-            last_name: lastName,
-            email: email,
-            password: password
-          })
-            .then(data => {
-              const success = data.data.success;
-              if (success === true) {
-                this.setState({ serverErrors: '' });
-                this.props.history.push('/profile');
-              } else if (success === false) {
-                let returnedErrors = data.data.errors.errors;
-                this.setState({ serverErrors: returnedErrors });
-              }
+        this.setState(
+          prevState => ({ isLoading: !prevState.isLoading }),
+          () => {
+            return newUserSignUp();
+          }
+        );
+        const newUserSignUp = () => {
+          auth.newuser(() => {
+            API.newuser({
+              first_name: firstName,
+              last_name: lastName,
+              email: email,
+              password: password
             })
-            .catch(error => {
-              if (error) {
-                this.setState({
-                  serverErrors: 'Server error. Please try again later.'
-                });
-              }
-            });
-        });
+              .then(data => {
+                const success = data.data.success;
+                if (success === true) {
+                  this.setState(
+                    prevState => ({
+                      serverErrors: '',
+                      isLoading: !prevState.isLoading
+                    }),
+                    () => {
+                      return this.props.history.push('/profile');
+                    }
+                  );
+                } else if (success === false) {
+                  let returnedErrors = data.data.errors.errors;
+                  this.setState(
+                    prevState => ({
+                      serverErrors: returnedErrors,
+                      isLoading: !prevState.isLoading
+                    }),
+                    () => {
+                      console.log(this.state);
+                    }
+                  );
+                }
+              })
+              .catch(error => {
+                if (error) {
+                  this.setState({
+                    serverErrors: 'Server error. Please try again later.'
+                  });
+                }
+              });
+          });
+        };
         //
       } else {
         this.setState({ serverErrors: '' });
@@ -211,36 +278,44 @@ class Register extends React.Component {
     const formErrors = this.state.formErrors;
     return (
       <div className="homePage">
-        <div className="existingUserForm">
-          <Logo />
-          <h1 className="existingUserFormHeader">Chat-a-Mate</h1>
-          <input
-            className="userName"
-            type="text"
-            placeholder="Email"
-            name="userName"
-            onChange={e => {
-              this.handleInput(e);
-            }}
-          />
-          <input
-            className="userPassword"
-            type="password"
-            placeholder="Password"
-            name="userPassword"
-            onChange={e => {
-              this.handleInput(e);
-            }}
-          />
-          <button
-            className="signIn"
-            onClick={e => {
-              this.signIn(e);
-            }}
-          >
-            Log In
-          </button>
-        </div>
+        {this.state.isLoading === false ? (
+          <div className="existingUserForm">
+            <Logo />
+            <h1 className="existingUserFormHeader">Chat-a-Mate</h1>
+            <input
+              className="userName"
+              type="text"
+              placeholder="Email"
+              value={this.state.userName}
+              name="userName"
+              onChange={e => {
+                this.handleInput(e);
+              }}
+            />
+            <input
+              className="userPassword"
+              type="password"
+              placeholder="Password"
+              name="userPassword"
+              onChange={e => {
+                this.handleInput(e);
+              }}
+            />
+            <button
+              className="signIn"
+              onClick={e => {
+                this.signIn(e);
+              }}
+            >
+              Log In
+            </button>
+          </div>
+        ) : (
+          <div className="existingUserForm">
+            <Logo />
+            <h1 className="existingUserFormHeader">Chat-a-Mate</h1>
+          </div>
+        )}
         <div className="errorSpan">
           {this.state.serverErrors.length > 0
             ? this.state.serverErrors.map((error, index) => {
@@ -268,81 +343,90 @@ class Register extends React.Component {
             <span className="errorMessage">{formErrors.password}</span>
           )}
         </div>
-        <div className="newUserForm" ref="form">
-          <h1 className="newUserFormHeader1">Don't Have an Account</h1>
-          <h3 className="newUserFormHeader3">Create One</h3>
-          <div className="name">
-            <input
-              ref="firstName"
-              className="firstNameField"
-              style={
-                formErrors.firstName.length > 0 || this.state.firstName === null
-                  ? { borderColor: 'red' }
-                  : { border: null }
-              }
-              type="text"
-              placeholder="First Name"
-              name="firstName"
-              onChange={e => {
-                this.handleInput(e);
-              }}
-            />
-            <input
-              ref="lastName"
-              className="lastNameField"
-              type="text"
-              style={
-                formErrors.lastName.length > 0 || this.state.lastName === null
-                  ? { borderColor: 'red' }
-                  : { border: null }
-              }
-              placeholder="Last Name"
-              name="lastName"
-              onChange={e => {
-                this.handleInput(e);
-              }}
-            />
+        {this.state.isLoading === false ? (
+          <div className="newUserForm" ref="form">
+            <h1 className="newUserFormHeader1">Don't Have an Account</h1>
+            <h3 className="newUserFormHeader3">Create One</h3>
+            <div className="name">
+              <input
+                ref="firstName"
+                className="firstNameField"
+                style={
+                  formErrors.firstName.length > 0 || this.state.firstName === ''
+                    ? { borderColor: 'red' }
+                    : { border: null }
+                }
+                type="text"
+                placeholder="First Name"
+                name="firstName"
+                value={this.state.firstName}
+                onChange={e => {
+                  this.handleInput(e);
+                }}
+              />
+              <input
+                ref="lastName"
+                className="lastNameField"
+                type="text"
+                value={this.state.lastName}
+                style={
+                  formErrors.lastName.length > 0 || this.state.lastName === ''
+                    ? { borderColor: 'red' }
+                    : { border: null }
+                }
+                placeholder="Last Name"
+                name="lastName"
+                onChange={e => {
+                  this.handleInput(e);
+                }}
+              />
+            </div>
+            <div className="emailPass">
+              <input
+                ref="email"
+                className="emailField"
+                type="text"
+                value={this.state.email}
+                style={
+                  formErrors.email.length > 0 || this.state.email === ''
+                    ? { borderColor: 'red' }
+                    : { border: null }
+                }
+                placeholder="Email"
+                name="email"
+                onChange={e => {
+                  this.handleInput(e);
+                }}
+              />
+              <input
+                ref="password"
+                className="passwordField"
+                type="password"
+                style={
+                  formErrors.password.length > 0 || this.state.password === ''
+                    ? { borderColor: 'red' }
+                    : { border: null }
+                }
+                placeholder="Password"
+                name="password"
+                value={this.state.password}
+                onChange={e => {
+                  this.handleInput(e);
+                }}
+              />
+            </div>
+            <button
+              className="newUserFormSubmit"
+              onClick={e => this.handleSubmit(e)}
+            >
+              Submit
+            </button>
           </div>
-          <div className="emailPass">
-            <input
-              ref="email"
-              className="emailField"
-              type="text"
-              style={
-                formErrors.email.length > 0 || this.state.email === null
-                  ? { borderColor: 'red' }
-                  : { border: null }
-              }
-              placeholder="Email"
-              name="email"
-              onChange={e => {
-                this.handleInput(e);
-              }}
-            />
-            <input
-              ref="password"
-              className="passwordField"
-              type="password"
-              style={
-                formErrors.password.length > 0 || this.state.password === null
-                  ? { borderColor: 'red' }
-                  : { border: null }
-              }
-              placeholder="Password"
-              name="password"
-              onChange={e => {
-                this.handleInput(e);
-              }}
-            />
+        ) : (
+          <div className=" newUserForm">
+            <Loading isLoading={this.state.isLoading} />
           </div>
-          <button
-            className="newUserFormSubmit"
-            onClick={e => this.handleSubmit(e)}
-          >
-            Submit
-          </button>
-        </div>
-        <Loading isLoading={this.state.isLoading} />
+        )}
         <a
           target="_blank"
           rel="noopener noreferrer"
