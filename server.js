@@ -40,11 +40,11 @@ const sessionOptions = {
   resave: false,
   saveUninitialized: false,
   cookie: {
-    expires: cookieExpirationDate, //1 month,
-    proxy: true,
+    expires: cookieExpirationDate //1 month,
+    /*proxy: true,
     secureProxy: true,
     secure: process.env.NODE_ENV === 'production' ? true : false,
-    httpOnly: process.env.NODE_ENV === 'production' ? true : false
+    httpOnly: process.env.NODE_ENV === 'production' ? true : false*/
   },
   store: new SequelizeStore({
     db: db,
