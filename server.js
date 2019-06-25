@@ -24,11 +24,11 @@ if (process.env.NODE_ENV === 'production') {
   app.get('/profile', (req, res) => {
     res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
   });
+  app.get('/test', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+  });
   app.enable('trust-proxy', 1); //for securing cookies
 }
-app.get('/test', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
-});
 //======================for passport and persistence=====================//
 //session options
 function extendedDefaultFields(defaults, session) {
