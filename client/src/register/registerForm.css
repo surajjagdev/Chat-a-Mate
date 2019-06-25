@@ -244,7 +244,7 @@ body {
   top: 10px;
   pointer-events: none;
 }
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 721px) {
   .existingUserFormHeader {
     display: none;
   }
@@ -270,6 +270,11 @@ body {
   .emailField,
   .passwordField {
     width: 100px;
+  }
+  .test {
+    color: red;
+    height: 50px;
+    width: 50px;
   }
   .newUserFormHeader1 {
     margin-left: -40px;
