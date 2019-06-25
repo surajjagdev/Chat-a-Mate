@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import API from '../utils/api.js';
 import './registerForm.css';
 import auth from '../auth/auth.js';
+import Loading from '../loading/loading.js';
 class Register extends React.Component {
   state = {
     userName: '',
@@ -13,6 +14,7 @@ class Register extends React.Component {
     email: null,
     password: null,
     serverErrors: '',
+    isLoading: false,
     formErrors: {
       firstName: '',
       lastName: '',
@@ -340,6 +342,7 @@ class Register extends React.Component {
             Submit
           </button>
         </div>
+        <Loading isLoading={this.state.isLoading} />
         <a
           target="_blank"
           rel="noopener noreferrer"
