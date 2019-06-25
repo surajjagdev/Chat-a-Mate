@@ -56,8 +56,9 @@ const myLocalConfiguration = passport => {
               if (err) {
                 return done(null, false);
               }
-              if (response === true) {
-                return done(null, user.id);
+              if (response === true && typeof user.id !== 'undefined') {
+                const userIdentifaction = user.id;
+                return done(null, userIdentifaction);
               } else {
                 return done(null, false);
               }

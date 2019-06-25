@@ -155,7 +155,7 @@ router.get('/api/auth/user/success', (req, res) => {
   return res.json({
     success: true,
     errors: null,
-    user: req.session.passport
+    user: req.session.passport.user
   });
 });
 router.get('/api/user/logout', authenticationMiddleware(), (req, res) => {
