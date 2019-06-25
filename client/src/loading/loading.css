@@ -2,13 +2,16 @@
   border: 16px solid #f3f3f3;
   border-radius: 50%;
   border-top: 16px solid #3498db;
-  margin-left: 45%;
-  margin-top: 10%;
+  margin-left: 35%;
+  margin-top: 5%;
+  /* margin-top: -50%;
+  margin-left: -50px;*/
   width: 120px;
   height: 120px;
   -webkit-animation: spin 2s linear infinite; /* Safari */
   animation: spin 2s linear infinite;
 }
+
 /*Safari*/
 @-webkit-keyframes spin {
   0% {
