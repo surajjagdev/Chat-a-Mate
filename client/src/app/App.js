@@ -1,15 +1,9 @@
 import React from 'react';
-import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-  Redirect,
-  Switch
-} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 import Register from '../register/registerform';
 import ProtectedRoute from '../auth/protectroute.js';
 import auth from '../auth/auth.js';
-import API from '../utils/api.js';
+import Profile from '../profile/profile.js';
 import './App.css';
 
 class App extends React.Component {
@@ -19,7 +13,7 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/" component={Register} />
           <ProtectedRoute exact path="/test" component={Other} />
-          <ProtectedRoute exact path="/profile" component={Test} />
+          <ProtectedRoute exact path="/profile" component={Profile} />
           <Route path="*" component={() => '404 NOT FOUND!'} />
         </Switch>
       </Router>
@@ -34,16 +28,6 @@ const Other = () => {
         <div>Profile {auth.isAuthenticated()}</div>
       </Link>
     </div>
-  );
-};
-const Test = () => {
-  return (
-    <Link to="/test">
-      <div>
-        Test
-        {auth.isAuthenticated()}
-      </div>
-    </Link>
   );
 };
 
