@@ -142,16 +142,39 @@ router.get(
   '/api/auth/user/authcheck',
   authenticationMiddleware(),
   (req, res) => {
-    return res.json({
-      success: true,
-      errors: null,
-      user: req.session.passport.user
-    });
+    db.User.findOne({
+      where: {
+        id: req.session.passport.user
+      }
+    })
+      .then(found => {
+        if (found) {
+          return res.json({
+            success: true,
+            errors: null,
+            details: {
+              firstName: found.first_name,
+              lastName: found.last_name,
+              email: found.email
+            },
+            user: req.session.passport.user
+          });
+        } else {
+          return res.json({
+            success: false,
+            errors: { errors: [{ message: 'Please Try again later' }] }
+          });
+        }
+      })
+      .catch(error => {
+        if (error) {
+          console.log('error: ', error);
+        }
+      });
   }
 );
 router.get('/api/auth/user/failure', authenticationMiddleware());
 router.get('/api/auth/user/success', (req, res) => {
-  console.log('req.session.passport: ', req.session);
   return res.json({
     success: true,
     errors: null,
