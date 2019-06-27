@@ -5,7 +5,7 @@ import Logo from '../logo/logo.js';
 const Banner = props => {
   return (
     <div className="Banner">
-      <div style={{ display: 'grid', gridTemplateColumns: '150px 1fr' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '150px  1fr' }}>
         <Logo />
         <input
           className="searchBar"
@@ -19,81 +19,42 @@ const Banner = props => {
       </div>
       <button
         className="searchButton"
-        style={{
-          position: 'relative',
-          height: '41px',
-          width: '60px',
-          top: '15px'
-        }}
         onClick={e => {
           console.log('hello');
         }}
       >
-        Search
+        <i className="material-icons">search</i>
       </button>
+      <div />
       <div
         className="userLinks"
         style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr 1fr',
-          gridGap: '1px',
-          marginLeft: '5px'
+          gridTemplateColumns: '40px 40px 40px 40px 40px 40px',
+          gridGap: '5px',
+          marginLeft: '5px',
+          marginTop: '5px',
+          textAlign: 'center'
         }}
       >
-        <div
-          style={{
-            backgroundColor: 'white',
-            width: '80px',
-            height: '35px',
-            position: 'relative',
-            top: '18px'
-          }}
-        />
-        <div
-          style={{
-            backgroundColor: 'red',
-            width: '80px',
-            height: '35px',
-            position: 'relative',
-            top: '18px'
-          }}
-        />
-        <div
-          style={{
-            backgroundColor: 'yellow',
-            width: '80px',
-            height: '35px',
-            position: 'relative',
-            top: '18px'
-          }}
-        />
-        <div
-          style={{
-            backgroundColor: 'brown',
-            width: '80px',
-            height: '35px',
-            position: 'relative',
-            top: '18px'
-          }}
-        />
-        <div
-          style={{
-            backgroundColor: 'purple',
-            width: '80px',
-            height: '35px',
-            position: 'relative',
-            top: '18px'
-          }}
-        />
-        <div
-          style={{
-            backgroundColor: 'black',
-            width: '80px',
-            height: '35px',
-            position: 'relative',
-            top: '18px'
-          }}
-        />
+        <div className="bannerIcons">
+          <i className="material-icons">home</i>
+        </div>
+        <div className="bannerIcons">
+          <i className="material-icons">create</i>
+        </div>
+        <div className="bannerIcons">
+          <i className="material-icons">people</i>
+        </div>
+        <div className="bannerIcons">
+          <i className="material-icons">message</i>
+        </div>
+        <div className="bannerIcons">
+          <i className="material-icons">notifications</i>
+        </div>
+        <div className="bannerIcons">
+          <i className="material-icons">arrow_drop_down_circle</i>
+        </div>
       </div>
     </div>
   );

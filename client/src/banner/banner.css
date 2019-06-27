@@ -10,7 +10,7 @@
   width: 100%;
   height: 70px;
   display: grid;
-  grid-template-columns: 1fr 61px 1fr;
+  grid-template-columns: 1fr 61px 25px 1fr;
   background: rgba(16, 76, 132, 1);
   background: -moz-linear-gradient(
     left,
@@ -50,4 +50,32 @@
     rgba(13, 58, 110, 1) 84%
   );
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#104c84', endColorstr='#0d3a6e', GradientType=1 );
+}
+.bannerIcons {
+  overflow: hidden;
+  width: 80px;
+  height: 35px;
+  position: relative;
+  top: 18px;
+  cursor: pointer;
+}
+.searchBar {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border: none;
+  height: 39px;
+}
+.searchButton {
+  position: relative;
+  height: 41px;
+  width: 60px;
+  top: 15px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border: none;
+}
+.dropDown {
+  width: 431;
+  height: 300px;
+  border-radius: 1.5px;
 }

@@ -7,10 +7,18 @@ class Auth {
     this.lastName = 'PlaceHolder';
     this.email = 'PlaceHolder';
   }
-  checkAuth() {
+  checkAuth(cb) {
     API.checkauth()
       .then(data => {
-        if (data.data.success === true) {
+        if (data.data.success === true && typeof cb !== 'undefined') {
+          return (
+            (this.authenticated = true),
+            (this.firstName = data.data.details.firstName),
+            (this.lastName = data.data.details.lastName),
+            (this.email = data.data.details.email),
+            cb()
+          );
+        } else if (data.data.success === true && typeof cb === 'undefined') {
           return (
             (this.authenticated = true),
             (this.firstName = data.data.details.firstName),
