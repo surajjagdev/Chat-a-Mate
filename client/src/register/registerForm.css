@@ -1,5 +1,9 @@
+html,
 body {
-  background: rgba(242, 246, 248, 1);
+  padding: 0;
+  margin: 0;
+  background: rgba(223, 227, 238);
+  /*background: rgba(242, 246, 248, 1);
   background: -moz-linear-gradient(
     left,
     rgba(242, 246, 248, 1) 0%,
@@ -44,6 +48,7 @@ body {
     rgba(224, 239, 249, 1) 100%
   );
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f6f8', endColorstr='#e0eff9', GradientType=1 );
+*/
 }
 .newUserForm {
   position: absolute;
