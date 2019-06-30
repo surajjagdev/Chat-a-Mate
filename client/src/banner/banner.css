@@ -60,6 +60,7 @@
   display: flex;
   flex-flow: row wrap;
   align-items: center;
+  max-width: 300px;
 }
 /* mobile hamburger icon*/
 .toggle_button:focus {
