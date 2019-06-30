@@ -1,5 +1,6 @@
 html,
 body {
+  -webkit-appearance: none;
   padding: 0;
   margin: 0;
   background: rgba(223, 227, 238);

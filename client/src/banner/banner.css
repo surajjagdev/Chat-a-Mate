@@ -29,6 +29,8 @@
 .searchBar {
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
   border: none;
   height: 39px;
 }
@@ -40,7 +42,6 @@
   border-bottom-right-radius: 5px;
   border: none;
   background-color: lightgray;
-  -webkit-appearance: none;
 }
 .dropDown {
   width: 431;
