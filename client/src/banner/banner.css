@@ -58,6 +58,7 @@
   text-align: center;
 }
 .searchBarAndButton {
+  background-color: red;
   -webkit-appearance: none;
   display: flex;
   flex-flow: row wrap;
