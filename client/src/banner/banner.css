@@ -116,6 +116,7 @@
   }
   .searchButton {
     max-width: 30px;
+    height: 41px;
   }
 }
 @media screen and (max-width: 570px) {
