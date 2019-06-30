@@ -1,7 +1,6 @@
 .searchBar {
   position: relative;
   height: 35px;
-  top: 10px;
   margin-left: 5px;
 }
 .banner {
@@ -14,44 +13,6 @@
   display: grid;
   grid-template-columns: 1fr 25px 1fr;
   background: rgba(16, 76, 132, 1);
-  /*background: -moz-linear-gradient(
-    left,
-    rgba(16, 76, 132, 1) 0%,
-    rgba(13, 58, 110, 1) 70%,
-    rgba(13, 58, 110, 1) 84%
-  );
-  background: -webkit-gradient(
-    left top,
-    right top,
-    color-stop(0%, rgba(16, 76, 132, 1)),
-    color-stop(70%, rgba(13, 58, 110, 1)),
-    color-stop(84%, rgba(13, 58, 110, 1))
-  );
-  background: -webkit-linear-gradient(
-    left,
-    rgba(16, 76, 132, 1) 0%,
-    rgba(13, 58, 110, 1) 70%,
-    rgba(13, 58, 110, 1) 84%
-  );
-  background: -o-linear-gradient(
-    left,
-    rgba(16, 76, 132, 1) 0%,
-    rgba(13, 58, 110, 1) 70%,
-    rgba(13, 58, 110, 1) 84%
-  );
-  background: -ms-linear-gradient(
-    left,
-    rgba(16, 76, 132, 1) 0%,
-    rgba(13, 58, 110, 1) 70%,
-    rgba(13, 58, 110, 1) 84%
-  );
-  background: linear-gradient(
-    to right,
-    rgba(16, 76, 132, 1) 0%,
-    rgba(13, 58, 110, 1) 70%,
-    rgba(13, 58, 110, 1) 84%
-  );
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#104c84', endColorstr='#0d3a6e', GradientType=1 );*/
 }
 .logoandsearch {
   display: grid;
@@ -75,7 +36,6 @@
   position: relative;
   height: 41px;
   width: 60px;
-  top: 16px;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
   border: none;
@@ -93,12 +53,52 @@
   margin-top: 5px;
   text-align: center;
 }
+.searchBarAndButton {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+}
+/* mobile hamburger icon*/
+.toggle_button:focus {
+  outline: none;
+}
+.toggle_button_line {
+  width: 30px;
+  height: 1px;
+  background: rgba(223, 227, 238);
+}
+.toggle_button {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 20px;
+  width: 30px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 100;
+  position: fixed;
+  padding: 0;
+  box-sizing: border-box;
+  right: 5px;
+  top: 22px;
+}
+.sideDrawer {
+  background-color: white;
+  position: fixed;
+  top: 72px;
+  width: 100vw;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+}
+
+/*===============================*/
 @media screen and (max-width: 780px) {
   .emptyDiv {
     display: none;
-  }
-  .banner {
-    grid-template-columns: 1fr 1fr;
   }
   .logoandsearch {
     grid-template-columns: 100px 1fr;
@@ -115,8 +115,32 @@
     max-width: 30px;
   }
 }
-@media screen and (max-width: 630px) {
+@media screen and (max-width: 570px) {
+  .userLinks {
+    display: none;
+  }
+  .banner {
+    grid-template-columns: 100px 200px 1fr;
+  }
+  .searchBarAndButton {
+    width: 200px;
+  }
+  .toggle_button {
+    display: flex;
+  }
+}
+@media screen and (max-width: 280px) {
   .searchBar {
-    max-width: 60px;
+    width: 50px;
+  }
+}
+@media screen and (max-width: 230px) {
+  .searchBarAndButton {
+    display: none;
+  }
+}
+@media screen and (max-width: 112px) {
+  .logoandsearch {
+    display: none;
   }
 }

@@ -2,12 +2,13 @@ import React from 'react';
 import '../register/registerForm.css';
 import './banner.css';
 import Logo from '../logo/logo.js';
+import MobileMenu from './mobilemenu.js';
 const Banner = props => {
   return (
     <div className="banner">
       <div className="logoandsearch">
         <Logo />
-        <div>
+        <div className="searchBarAndButton">
           <input
             className="searchBar"
             type="text"
@@ -28,6 +29,10 @@ const Banner = props => {
         </div>
       </div>
       <div className="emptyDiv" />
+      <MobileMenu
+        toggleClickHandler={props.toggleClickHandler}
+        width={props.width}
+      />
       <div className="userLinks">
         <div className="bannerIcons">
           <i className="material-icons">home</i>
