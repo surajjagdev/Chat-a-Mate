@@ -302,6 +302,7 @@ class Register extends React.Component {
               }}
             />
             <button
+              type="submit"
               className="signIn"
               onClick={e => {
                 this.signIn(e);

@@ -20,6 +20,7 @@ const Banner = props => {
           />
           <button
             className="searchButton"
+            type="submit"
             onClick={e => {
               console.log('hello');
             }}
