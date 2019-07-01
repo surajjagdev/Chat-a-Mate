@@ -1,0 +1,27 @@
+.userdetails {
+  display: flex;
+  flex-direction: row;
+  background-color: blue;
+  max-width: 160px;
+}
+.userdetails_picture {
+  max-width: 20px;
+  max-height: 20px;
+  border-radius: 50%;
+  margin-top: 16.5px;
+}
+.userdetails_ptags {
+  padding-left: 3px;
+}
+.editprofile {
+  display: flex;
+  padding-left: 28px;
+}
+.editprofileelipse {
+  width: 5px;
+  margin-top: 26px;
+  height: 4px;
+  border-radius: 50%;
+  margin-left: 2px;
+  background-color: black;
+}

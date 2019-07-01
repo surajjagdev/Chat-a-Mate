@@ -1,6 +1,6 @@
 import React from 'react';
 const MobileMenuLinks = props => {
-  return props.sideDrawerOpen && props.width <= 570 ? (
+  return props.sideDrawerOpen && props.width <= 610 ? (
     <div className="sideDrawer">
       <div className="bannerIconsMobile">
         <i className="material-icons">home</i>

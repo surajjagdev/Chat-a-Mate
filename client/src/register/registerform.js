@@ -1,10 +1,9 @@
 import React from 'react';
-import Logo from '../logo/logo.js';
-import { Link } from 'react-router-dom';
+import Logo from '../components/logo/logo.js';
 import API from '../utils/api.js';
 import './registerForm.css';
 import auth from '../auth/auth.js';
-import Loading from '../loading/loading.js';
+import Loading from '../components/loading/loading.js';
 class Register extends React.Component {
   state = {
     userName: '',

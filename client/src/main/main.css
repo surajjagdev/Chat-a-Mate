@@ -1,0 +1,8 @@
+.main {
+  padding-top: 65px;
+  width: 90vw;
+  height: 100vh;
+  margin: auto;
+  /*remove background color after*/
+  background-color: red;
+}

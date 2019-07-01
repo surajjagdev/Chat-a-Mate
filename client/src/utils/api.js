@@ -19,5 +19,14 @@ export default {
   },
   checkauth: () => {
     return axios.get('/api/auth/user/authcheck');
+  },
+  updateimage: data => {
+    return axios.put('/api/user/update', {
+      params: {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email
+      }
+    });
   }
 };

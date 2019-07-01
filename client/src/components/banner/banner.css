@@ -16,7 +16,7 @@
 }
 .logoandsearch {
   display: grid;
-  grid-template-columns: 150px 1fr;
+  grid-template-columns: 165px 1fr;
 }
 .bannerIcons {
   overflow: hidden;
@@ -27,13 +27,6 @@
   cursor: pointer;
 }
 .searchBar {
-  /*
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
-  border: none;
-  height: 39px;*/
   width: 100%;
   border: 3px solid lightgray;
   border-right: none;
@@ -44,15 +37,6 @@
   color: black;
 }
 .searchButton {
-  /*
-  -webkit-appearance: none;
-  position: relative;
-  height: 41px;
-  width: 60px;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
-  border: none;
-  background-color: lightgray;*/
   width: 40px;
   height: 36px;
   border: none;
@@ -77,13 +61,6 @@
   text-align: center;
 }
 .searchBarAndButton {
-  /*
-  background-color: red;
-  -webkit-appearance: none;
-  display: flex;
-  flex-flow: row wrap;
-  align-items: center;
-  max-width: 300px;*/
   width: 100%;
   position: relative;
   display: flex;
@@ -132,13 +109,13 @@
     display: none;
   }
   .logoandsearch {
-    grid-template-columns: 100px 1fr;
+    grid-template-columns: 165px 1fr;
   }
   .searchBar {
     min-width: 100px;
   }
 }
-@media screen and (max-width: 570px) {
+@media screen and (max-width: 610px) {
   .userLinks {
     display: none;
   }
@@ -149,8 +126,13 @@
     display: flex;
   }
 }
+@media screen and (max-width: 360px) {
+  .logoandsearch {
+    grid-template-columns: 100px 1fr;
+  }
+}
 
-@media screen and (max-width: 230px) {
+@media screen and (max-width: 300px) {
   .searchBarAndButton {
     display: none;
   }

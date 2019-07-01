@@ -58,6 +58,7 @@ router.post(
               first_name: stripTagsFunction(first_name.split(' ').join('')),
               last_name: stripTagsFunction(last_name.split(' ').join('')),
               email: stripTagsFunction(email.split(' ').join('')),
+              image: 'https://www.gstatic.com/webp/gallery/4.sm.jpg',
               password: hash
             })
               .then(created => {
@@ -155,7 +156,8 @@ router.get(
             details: {
               firstName: found.first_name,
               lastName: found.last_name,
-              email: found.email
+              email: found.email,
+              image: found.image
             },
             user: req.session.passport.user
           });
@@ -185,6 +187,63 @@ router.get('/api/user/logout', authenticationMiddleware(), (req, res) => {
   //logout
   req.logOut();
   req.session.destroy();
+});
+//=================update user====================================================================//
+router.put('/api/user/update', authenticationMiddleware(), (req, res) => {
+  const firstName = req.body.firstName;
+  const lastName = req.body.lastName;
+  const email = req.body.email;
+  const image = req.body.image;
+  db.User.findOne({
+    where: {
+      id: req.session.passport.user
+    }
+  }).then(found => {
+    if (
+      found &&
+      found.firstName === firstName &&
+      found.lastName === lastName &&
+      found.email === email
+    ) {
+      db.User.update(
+        {
+          image
+        },
+        {
+          where: {
+            id: req.session.passport.user
+          }
+        }
+      )
+        .then(rowsupdated => {
+          return res.json({ success: true, errors: null, rowsupdated });
+        })
+        .catch(error => {
+          if (err) {
+            return res.json({
+              success: false,
+              error: true,
+              errors: err,
+              message: 'An error has occured updating image'
+            });
+          }
+        });
+    } else {
+      return res.json({
+        success: false,
+        error: true,
+        errors: {
+          errors: [
+            {
+              message:
+                'Incorrect credientials to update image. Please try again.'
+            }
+          ]
+        },
+        message: 'Incorrect credientials'
+      });
+    }
+  });
 });
 //====================Check if user is logged in. If not make them login==============================//
 function authenticationMiddleware() {

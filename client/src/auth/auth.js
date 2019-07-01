@@ -6,6 +6,7 @@ class Auth {
     this.firstName = 'PlaceHolder';
     this.lastName = 'PlaceHolder';
     this.email = 'PlaceHolder';
+    this.image = '';
   }
   checkAuth(cb) {
     API.checkauth()
@@ -16,6 +17,7 @@ class Auth {
             (this.firstName = data.data.details.firstName),
             (this.lastName = data.data.details.lastName),
             (this.email = data.data.details.email),
+            (this.image = data.data.details.image),
             cb()
           );
         } else if (data.data.success === true && typeof cb === 'undefined') {
@@ -23,14 +25,16 @@ class Auth {
             (this.authenticated = true),
             (this.firstName = data.data.details.firstName),
             (this.lastName = data.data.details.lastName),
-            (this.email = data.data.details.email)
+            (this.email = data.data.details.email),
+            (this.image = data.data.details.image)
           );
         } else {
           return (
             (this.authenticated = false),
             (this.firstName = 'Login'),
             (this.lastName = 'Login'),
-            (this.email = 'login')
+            (this.email = 'login'),
+            (this.image = '../pictures/placeholder-image.png')
           );
         }
       })

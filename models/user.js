@@ -59,6 +59,10 @@ module.exports = function(sequelize, DataTypes) {
         }
       }
     },
+    image: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
     password_hash: { type: DataTypes.STRING, allowNull: false },
     //password field is virtual. Grab password from user input then will hash and set the password_hash field.
     password: {
