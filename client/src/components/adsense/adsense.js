@@ -1,0 +1,19 @@
+import React from 'react';
+
+export default class AdComponent extends React.Component {
+  componentDidMount() {
+    (window.adsbygoogle = window.adsbygoogle || []).push({});
+  }
+
+  render() {
+    return (
+      <ins
+        className="adsbygoogle"
+        style={{ display: 'block' }}
+        data-ad-client="ca-pub-4700419263969978"
+        data-ad-slot="12121212"
+        data-ad-format="auto"
+      />
+    );
+  }
+}

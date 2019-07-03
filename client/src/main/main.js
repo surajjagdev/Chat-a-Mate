@@ -1,5 +1,6 @@
 import React from 'react';
 import UserProfile from '../components/userprofile/userprofile.js';
+import AdComponent from '../components/adsense/adsense.js';
 import './main.css';
 class Main extends React.Component {
   state = {};
@@ -15,7 +16,9 @@ class Main extends React.Component {
         />
         <div className="main">
           <div className="mainstories">hi</div>
-          <div className="mainads" />
+          <div className="mainads">
+            <AdComponent />
+          </div>
         </div>
       </div>
     );
