@@ -1,4 +1,5 @@
 #Chat-a-mate
+<img src='client/public/pictures/registerationform.PNG' width='300px'>
 
 ##Description
 Social media application; Homage to Facebook, for developement purposes only
