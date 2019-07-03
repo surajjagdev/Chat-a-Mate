@@ -1,4 +1,6 @@
 #Chat-a-mate
+
+##Preview
 <img src='client/public/pictures/registerform.PNG' width='300px'>
 
 ##Description
