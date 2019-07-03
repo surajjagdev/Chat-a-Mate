@@ -6,13 +6,17 @@ class Main extends React.Component {
 
   render() {
     return (
-      <div className="main">
+      <div className="mainwrapper">
         <UserProfile
           firstName={this.props.firstName}
           lastName={this.props.lastName}
           email={this.props.email}
           image={this.props.image}
         />
+        <div className="main">
+          <div className="mainstories">hi</div>
+          <div className="mainads" />
+        </div>
       </div>
     );
   }
