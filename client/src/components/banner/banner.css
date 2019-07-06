@@ -105,7 +105,7 @@
 }
 .sideDrawer {
   background-color: white;
-  position: fixed;
+  position: absolute;
   height: 100%;
   top: 72px;
   width: 100%;
@@ -115,7 +115,6 @@
   flex-flow: row wrap;
   flex-flow: column;
   justify-content: space-evenly;
-  z-index: 100;
 }
 
 /*===============================*/
