@@ -22,7 +22,8 @@ class Main extends React.Component {
               style={{
                 backgroundColor: 'white',
                 borderRadius: '5px',
-                border: '1px solid gray'
+                border: '1px solid gray',
+                marginTop: '16.5px'
               }}
             >
               <div
@@ -48,7 +49,8 @@ class Main extends React.Component {
                     maxWidth: '60px',
                     maxHeight: '60px',
                     borderRadius: '50%',
-                    paddingRight: '5px'
+                    paddingRight: '5px',
+                    border: 'none'
                   }}
                   src={this.props.image}
                 />
@@ -63,7 +65,8 @@ class Main extends React.Component {
                     width: '100%',
                     paddingTop: '15px',
                     paddingBottom: '15px',
-                    textAlign: 'center'
+                    textAlign: 'center',
+                    border: 'none'
                   }}
                 />
               </div>
