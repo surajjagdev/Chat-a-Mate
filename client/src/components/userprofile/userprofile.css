@@ -1,6 +1,10 @@
-.userdetails {
+.userdetails_name {
   display: flex;
   flex-direction: row;
+}
+.userdetails {
+  display: flex;
+  flex-direction: column;
   background-color: blue;
   max-width: 130px;
 }
@@ -28,8 +32,25 @@
   margin-left: 2px;
   background-color: black;
 }
+.userdetails_postslikes {
+  display: flex;
+  flex-direction: row;
+}
+#likes {
+  margin-left: 10px;
+}
+#posts {
+  padding-left: 20px;
+}
+#likes,
+#posts {
+  display: contents;
+}
 @media screen and (max-width: 410px) {
   .userdetails_ptags {
+    display: none;
+  }
+  .userdetails_postslikes {
     display: none;
   }
 }

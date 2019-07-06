@@ -4,6 +4,8 @@
   height: 100vh;
   display: flex;
   flex-direction: row;
+  padding-left: 10px;
+  padding-right: 10px;
   /*remove background color after*/
 }
 .main {
@@ -17,6 +19,7 @@
   height: 100%;
   width: 60%;
   background-color: yellow;
+  margin-left: 5px;
 }
 .mainads {
   height: 100%;
@@ -24,4 +27,5 @@
   background-color: green;
   position: fixed;
   right: 0;
+  margin-right: 10px;
 }

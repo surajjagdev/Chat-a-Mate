@@ -59,6 +59,8 @@ router.post(
               last_name: stripTagsFunction(last_name.split(' ').join('')),
               email: stripTagsFunction(email.split(' ').join('')),
               image: 'https://www.gstatic.com/webp/gallery/4.sm.jpg',
+              number_posts: 0,
+              number_likes: 0,
               password: hash
             })
               .then(created => {
@@ -157,7 +159,9 @@ router.get(
               firstName: found.first_name,
               lastName: found.last_name,
               email: found.email,
-              image: found.image
+              image: found.image,
+              likes: found.number_likes,
+              posts: found.number_posts
             },
             user: req.session.passport.user
           });

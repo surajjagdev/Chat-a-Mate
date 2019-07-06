@@ -11,8 +11,11 @@ class Profile extends React.Component {
     lastName: '',
     email: '',
     image: '',
+    likes: 0,
+    posts: 0,
     sideDrawerOpen: false,
-    width: window.innerWidth
+    width: window.innerWidth,
+    status: ''
   };
   componentDidMount() {
     window.addEventListener('resize', this.handleWindowSizeChange);
@@ -24,7 +27,9 @@ class Profile extends React.Component {
               firstName: auth.firstName,
               lastName: auth.lastName,
               email: auth.email,
-              image: auth.image
+              image: auth.image,
+              likes: auth.likes,
+              posts: auth.posts
             },
             () => {
               return console.log(this.state);
@@ -42,6 +47,17 @@ class Profile extends React.Component {
     this.setState({ search: e.target.value }, () => {
       console.log(this.state.search);
     });
+  };
+  handleStatus = e => {
+    e.preventDefault();
+    this.setState(
+      {
+        status: e.target.value
+      },
+      () => {
+        console.log('post: ', this.state.status);
+      }
+    );
   };
   toggleClickHandler = e => {
     e.preventDefault();
@@ -81,6 +97,9 @@ class Profile extends React.Component {
           lastName={this.state.lastName}
           email={this.state.email}
           image={this.state.image}
+          likes={this.state.likes}
+          posts={this.state.posts}
+          handleStatus={this.handleStatus}
         />
       </div>
     );

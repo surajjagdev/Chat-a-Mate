@@ -7,6 +7,8 @@ class Auth {
     this.lastName = 'PlaceHolder';
     this.email = 'PlaceHolder';
     this.image = '';
+    this.posts = 0;
+    this.likes = 0;
   }
   checkAuth(cb) {
     API.checkauth()
@@ -18,6 +20,8 @@ class Auth {
             (this.lastName = data.data.details.lastName),
             (this.email = data.data.details.email),
             (this.image = data.data.details.image),
+            (this.posts = data.data.details.posts),
+            (this.likes = data.data.details.likes),
             cb()
           );
         } else if (data.data.success === true && typeof cb === 'undefined') {
@@ -26,7 +30,9 @@ class Auth {
             (this.firstName = data.data.details.firstName),
             (this.lastName = data.data.details.lastName),
             (this.email = data.data.details.email),
-            (this.image = data.data.details.image)
+            (this.image = data.data.details.image),
+            (this.posts = data.data.details.posts),
+            (this.likes = data.data.details.likes)
           );
         } else {
           return (
