@@ -84,7 +84,7 @@ require('./passport/passport')(passport);
 app.use(routes);
 //================port server=============================///
 //use routes when made and connect to mysql
-db.sequelize.sync().then(() => {
+db.sequelize.sync({ force: true }).then(() => {
   app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
   });
