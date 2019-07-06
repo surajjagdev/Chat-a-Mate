@@ -103,6 +103,7 @@ class Profile extends React.Component {
           likes={this.state.likes}
           posts={this.state.posts}
           handleStatus={this.handleStatus}
+          sideDrawerOpen={this.state.sideDrawerOpen}
         />
       </div>
     );

@@ -6,7 +6,7 @@ class Main extends React.Component {
   state = {};
 
   render() {
-    return (
+    return !this.props.sideDrawerOpen ? (
       <div className="mainwrapper">
         <UserProfile
           firstName={this.props.firstName}
@@ -75,7 +75,7 @@ class Main extends React.Component {
           <div className="mainads" />
         </div>
       </div>
-    );
+    ) : null;
   }
 }
 export default Main;
