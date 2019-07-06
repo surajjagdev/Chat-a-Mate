@@ -26,6 +26,18 @@
   top: 18px;
   cursor: pointer;
 }
+.bannerIconsMobile {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  border: 5px solid rgba(223, 227, 238);
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  white-space: pre-wrap;
+  padding-left: 20px;
+  padding-top: 10px;
+}
 .searchBar {
   width: 100%;
   border: 3px solid lightgray;
@@ -94,12 +106,14 @@
 .sideDrawer {
   background-color: white;
   position: fixed;
+  height: 100%;
   top: 72px;
   width: 100%;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   display: flex;
   flex-flow: row wrap;
+  flex-flow: column;
   justify-content: space-evenly;
   z-index: 100;
 }

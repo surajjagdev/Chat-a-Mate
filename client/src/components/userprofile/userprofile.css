@@ -46,11 +46,8 @@
 #posts {
   display: contents;
 }
-@media screen and (max-width: 410px) {
-  .userdetails_ptags {
-    display: none;
-  }
-  .userdetails_postslikes {
+@media screen and (max-width: 610px) {
+  .userdetails {
     display: none;
   }
 }

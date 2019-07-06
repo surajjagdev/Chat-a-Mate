@@ -90,6 +90,9 @@ class Profile extends React.Component {
           <MobileMenuLinks
             sideDrawerOpen={this.state.sideDrawerOpen}
             width={this.state.width}
+            firstName={this.state.firstName}
+            lastName={this.state.lastName}
+            image={this.state.image}
           />
         ) : null}
         <Main
