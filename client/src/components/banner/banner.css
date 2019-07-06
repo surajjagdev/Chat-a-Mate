@@ -95,12 +95,13 @@
   background-color: white;
   position: fixed;
   top: 72px;
-  width: 100vw;
+  width: 100%;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-between;
+  justify-content: space-evenly;
+  z-index: 100;
 }
 
 /*===============================*/

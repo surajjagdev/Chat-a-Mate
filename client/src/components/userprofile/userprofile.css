@@ -5,7 +5,7 @@
 .userdetails {
   display: flex;
   flex-direction: column;
-  background-color: blue;
+  /*background-color: blue;*/
   max-width: 130px;
 }
 .userdetails_picture {
@@ -22,7 +22,7 @@
   flex-direction: row;
   max-width: auto;
   max-height: 50px;
-  background-color: red;
+  /* background-color: red;*/
 }
 .editprofileelipse {
   width: 3px;
