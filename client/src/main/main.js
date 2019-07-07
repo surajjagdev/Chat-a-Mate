@@ -4,7 +4,10 @@ import UserProfile from '../components/userprofile/userprofile.js';
 import './main.css';
 class Main extends React.Component {
   state = {};
-
+  handleSubmit = e => {
+    this.props.handleSubmit(e);
+    this.status.value = '';
+  };
   render() {
     return !this.props.sideDrawerOpen ? (
       <div className="mainwrapper">
@@ -55,8 +58,10 @@ class Main extends React.Component {
                   src={this.props.image}
                 />
                 <input
+                  ref={ref => (this.status = ref)}
                   type="text"
                   onChange={this.props.handleStatus}
+                  value={this.props.status}
                   name="status"
                   placeholder={`Whats on your mind ${this.props.firstName} ${
                     this.props.lastName
@@ -69,6 +74,15 @@ class Main extends React.Component {
                     border: 'none'
                   }}
                 />
+                <button
+                  type="submit"
+                  id="postButton"
+                  onClick={e => {
+                    this.handleSubmit(e);
+                  }}
+                >
+                  <i className="material-icons">send</i>
+                </button>
               </div>
             </div>
           </div>

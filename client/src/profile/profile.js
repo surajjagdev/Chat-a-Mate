@@ -42,6 +42,13 @@ class Profile extends React.Component {
   componentWillUnmount() {
     window.removeEventListener('resize', this.handleWindowSizeChange);
   }
+  handleSubmit = e => {
+    e.preventDefault();
+    console.log(this.state.status);
+    this.setState({ status: '' }, () => {
+      console.log(this.state.status);
+    });
+  };
   handleInput = e => {
     e.preventDefault();
     this.setState({ search: e.target.value }, () => {
@@ -104,6 +111,8 @@ class Profile extends React.Component {
           posts={this.state.posts}
           handleStatus={this.handleStatus}
           sideDrawerOpen={this.state.sideDrawerOpen}
+          handleSubmit={this.handleSubmit}
+          status={this.props.status}
         />
       </div>
     );
