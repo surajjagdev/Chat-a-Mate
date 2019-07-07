@@ -249,6 +249,56 @@ router.put('/api/user/update', authenticationMiddleware(), (req, res) => {
     }
   });
 });
+//====================posts============================================================================//
+router.post(
+  '/api/auth/user/post',
+  authenticationMiddleware(),
+  (req, res) => {
+    const body = req.body.body;
+    //added_by and user_to will be same if posting status on own profile.
+    const added_by = req.body.added_by;
+    const user_to = req.body.user_to;
+    db.Post.create({
+      body: body,
+      added_by: added_by,
+      user_to: user_to
+    })
+      .then(created => {
+        if (created) {
+          return res.json({ success: true, errors: null, details: created });
+        } else {
+          res.json({
+            success: false,
+            error: true,
+            errors: {
+              errors: [{ message: 'Server Error saving Post' }]
+            }
+          });
+        }
+      })
+      .catch(error => {
+        return res.json({
+          success: false,
+          error: true,
+          errors: error
+        });
+      });
+  } /* else {
+    return res.json({
+      success: false,
+      error: true,
+      errors: {
+        errors: [
+          {
+            message: 'Post body is empty. Please write something in it.'
+          }
+        ]
+      },
+      message: 'Post body empty'
+    });
+  }*/
+);
+
 //====================Check if user is logged in. If not make them login==============================//
 function authenticationMiddleware() {
   return (req, res, next) => {

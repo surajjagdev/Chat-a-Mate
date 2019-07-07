@@ -1,12 +1,31 @@
 import React from 'react';
 import UserProfile from '../components/userprofile/userprofile.js';
 //import AdComponent from '../components/adsense/adsense.js';
+import API from '../utils/api.js';
 import './main.css';
 class Main extends React.Component {
   state = {};
   handleSubmit = e => {
-    this.props.handleSubmit(e);
-    this.status.value = '';
+    e.preventDefault();
+    API.poststatus({
+      body: this.props.status,
+      added_by: this.props.email,
+      user_to: 'test'
+    })
+      .then(data => {
+        console.log(data);
+        if (data.data.success === true) {
+          console.log('successfful post');
+          this.setState({ status: '' }, () => {
+            this.status.value = '';
+          });
+        } else {
+          console.log('fail post');
+        }
+      })
+      .catch(error => {
+        console.log('error: ', error);
+      });
   };
   render() {
     return !this.props.sideDrawerOpen ? (
@@ -62,6 +81,7 @@ class Main extends React.Component {
                   type="text"
                   onChange={this.props.handleStatus}
                   value={this.props.status}
+                  id="statusInput"
                   name="status"
                   placeholder={`Whats on your mind ${this.props.firstName} ${
                     this.props.lastName

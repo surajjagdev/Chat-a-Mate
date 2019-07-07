@@ -2,14 +2,7 @@ import React from 'react';
 import './userprofile.css';
 const UserProfile = props => {
   return (
-    <div
-      className="userdetails"
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        maxWidth: '130px'
-      }}
-    >
+    <div className="userdetails">
       <div
         className="userdetails_name"
         style={{

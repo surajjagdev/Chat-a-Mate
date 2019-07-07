@@ -27,9 +27,22 @@
   right: 0;
   margin-right: 10px;
 }
+#postButton {
+  border: none;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+#postButton:active {
+  background-color: rgba(16, 76, 132, 1);
+}
+
 @media screen and (max-width: 610px) {
   .mainads {
     display: none;
+  }
+  #statusInput {
+    font-size: 0.9em;
   }
   .mainstories {
     width: 95vw;

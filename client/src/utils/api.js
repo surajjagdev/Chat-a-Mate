@@ -20,6 +20,9 @@ export default {
   checkauth: () => {
     return axios.get('/api/auth/user/authcheck');
   },
+  poststatus: data => {
+    return axios.post('/api/auth/user/post', data);
+  },
   updateimage: data => {
     return axios.put('/api/user/update', {
       params: {
