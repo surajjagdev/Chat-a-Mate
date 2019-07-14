@@ -4,6 +4,7 @@ import Banner from '../components/banner/banner.js';
 import { Link } from 'react-router-dom';
 import MobileMenuLinks from '../components/banner/mobilemenulinks.js';
 import Main from '../main/main.js';
+import API from '../utils/api.js';
 class Profile extends React.Component {
   state = {
     user: '',
@@ -74,6 +75,31 @@ class Profile extends React.Component {
   };
   handleWindowSizeChange = () => {
     this.setState({ width: window.innerWidth });
+    if (this.state.sideDrawerOpen === true && this.state.width > 610) {
+      this.setState(
+        prevState => ({
+          sideDrawerOpen: !prevState.sideDrawerOpen
+        }),
+        () => {
+          console.log(this.state.sideDrawerOpen);
+        }
+      );
+    }
+  };
+  logout = e => {
+    e.preventDefault();
+    auth.logout(() => {
+      API.logout()
+        .then(() => {
+          console.log('success');
+          return this.props.history.push('/');
+        })
+        .catch(error => {
+          if (error) {
+            console.log(error);
+          }
+        });
+    });
   };
   render() {
     return (
@@ -83,6 +109,7 @@ class Profile extends React.Component {
           toggleClickHandler={this.toggleClickHandler}
           sideDrawerOpen={this.state.sideDrawerOpen}
           width={this.state.width}
+          logout={this.logout}
         />
         <Link to="/test">
           Test
@@ -95,6 +122,7 @@ class Profile extends React.Component {
             firstName={this.state.firstName}
             lastName={this.state.lastName}
             image={this.state.image}
+            logout={this.logout}
           />
         ) : null}
         <Main
@@ -108,6 +136,7 @@ class Profile extends React.Component {
           sideDrawerOpen={this.state.sideDrawerOpen}
           status={this.state.status}
           user={this.state.user}
+          width={this.state.width}
         />
       </div>
     );

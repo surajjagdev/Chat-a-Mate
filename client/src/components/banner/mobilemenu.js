@@ -4,6 +4,7 @@ const MobileMenu = props => {
   return (
     <button
       className="toggle_button"
+      style={{ right: props.sideDrawerOpen ? '29px' : null }}
       onClick={e => {
         props.toggleClickHandler(e);
       }}

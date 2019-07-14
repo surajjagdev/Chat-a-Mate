@@ -106,7 +106,7 @@ class Main extends React.Component {
               </div>
             </div>
           </div>
-          <div className="mainads" />
+          <div className="mainads" style={{ backgroundColor: 'green' }} />
         </div>
       </div>
     ) : null;

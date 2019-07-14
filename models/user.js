@@ -94,5 +94,12 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     }
   });
+  /*User.associate = models => {
+    //has many posts
+    User.hasMany(models.Post, {
+      foreignKey: 'added_by',
+      constraints: false
+    });
+  };*/
   return User;
 };

@@ -39,5 +39,23 @@ Object.keys(db).forEach(modelName => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+//models/tables
+db.User = require('./user.js')(sequelize, Sequelize);
+db.Post = require('./posts.js')(sequelize, Sequelize);
+db.PostComment = require('./posts_comments.js')(sequelize, Sequelize);
+db.Like = require('./likes.js')(sequelize, Sequelize);
+//=================relations========================//
+//Users have many posts
+db.User.hasMany(db.Post);
+//each post belongs to one User
+db.Post.belongsTo(db.User);
+//comments belong to post
+db.PostComment.belongsTo(db.Post);
+//Posts can have many comments
+db.Post.hasMany(db.PostComment);
+//Post can have many likes
+db.Post.hasMany(db.Like);
+//like can belong to a single post
+db.Like.belongsTo(db.Post);
 
 module.exports = db;

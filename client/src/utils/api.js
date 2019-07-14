@@ -31,5 +31,13 @@ export default {
         email: data.email
       }
     });
+  },
+  getPostsByFriends: data => {
+    return axios.get('/api/user/posts/allfriends', {
+      params: {
+        userId: data.userId,
+        email: data.email
+      }
+    });
   }
 };

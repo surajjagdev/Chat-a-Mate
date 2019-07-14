@@ -1,19 +1,21 @@
+const uuidv4 = require('uuid/v4');
 module.exports = function(sequelize, DataTypes) {
   var Post = sequelize.define('Post', {
     //id using a uuid instead
     id: {
       allowNull: false,
       primaryKey: true,
-      autoIncrement: true,
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       validate: {
         notNull: true
-      }
+      },
+      defaultValue: () => uuidv4()
     },
     body: {
       allowNull: false,
       type: DataTypes.TEXT
     },
+    //userId
     added_by: {
       allowNull: false,
       type: DataTypes.STRING

@@ -33,7 +33,23 @@ const MobileMenuLinks = props => {
         <i className="material-icons">notifications</i> Notifications
       </div>
       <div className="bannerIconsMobile">
-        <i className="material-icons">arrow_drop_down_circle</i>Profile
+        <div
+          style={{
+            backgroundColor: 'black',
+            height: '30px',
+            width: '120px',
+            color: 'rgba(223, 227, 238)',
+            borderRadius: '5px',
+            fontWeight: 'bold',
+            fontSize: '1.1em',
+            cursor: 'pointer',
+            border: 'none',
+            textAlign: 'center'
+          }}
+          onClick={e => props.logout(e)}
+        >
+          SignOut
+        </div>
       </div>
     </div>
   ) : null;

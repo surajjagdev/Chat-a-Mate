@@ -3,6 +3,7 @@ const bycrpt = require('bcrypt');
 const passport = require('passport');
 const express = require('express');
 const router = express.Router();
+const sequelize = require('sequelize');
 const saltRounds = 10;
 //=========================Get all users===========================================//
 router.get('/api/users', authenticationMiddleware(), (req, res, next) => {
@@ -189,8 +190,18 @@ router.get('/api/auth/user/success', (req, res) => {
 });
 router.get('/api/user/logout', authenticationMiddleware(), (req, res) => {
   //logout
+
   req.logOut();
-  req.session.destroy();
+  req.session.destroy(error => {
+    if (!error) {
+      return res
+        .status(200)
+        .clearCookie('backend', {
+          path: '/'
+        })
+        .json({ success: true });
+    }
+  });
 });
 //=================update user====================================================================//
 router.put('/api/user/update', authenticationMiddleware(), (req, res) => {
@@ -253,7 +264,7 @@ router.put('/api/user/update', authenticationMiddleware(), (req, res) => {
 
 //get all posts from user
 router.get(
-  '/api/auth/user/allposts',
+  '/api/user/posts/allfriends',
   authenticationMiddleware(),
   (req, res) => {
     const email = req.body.email;
@@ -264,7 +275,7 @@ router.get(
       }
     })
       .then(found => {
-        if (found.email === email) {
+        if (found.email === email && userId === req.session.passport.user) {
           return res.json({
             success: true,
             error: null,
@@ -295,7 +306,8 @@ router.post('/api/auth/user/post', authenticationMiddleware(), (req, res) => {
   db.Post.create({
     body: body,
     added_by: added_by,
-    user_to: user_to
+    user_to: user_to,
+    UserId: user
   })
     .then(created => {
       if (!created) {
@@ -314,24 +326,42 @@ router.post('/api/auth/user/post', authenticationMiddleware(), (req, res) => {
       } else {
         db.User.update(
           {
-            number_posts: 3
+            number_posts: sequelize.literal('number_posts + 1')
           },
           {
-            returning: true,
             where: {
               id: user
             }
           }
         )
           .then(found => {
+            console.log('found yo ', found);
+            //if updated make another db call to user
             if (found) {
-              return res.json({
-                success: true,
-                errors: null,
-                details: created,
-                number_posts: found.number_posts,
-                number_likes: found.number_likes
-              });
+              db.User.findOne({
+                where: {
+                  id: user
+                }
+              })
+                .then(foundUpdated => {
+                  if (foundUpdated) {
+                    return res.json({
+                      success: true,
+                      errors: null,
+                      details: created,
+                      number_posts: foundUpdated.number_posts,
+                      number_likes: foundUpdated.number_likes
+                    });
+                  }
+                })
+                .catch(error => {
+                  return res.json({
+                    success: false,
+                    error: true,
+                    errors: error,
+                    message: 'Posts created, user update failed however.'
+                  });
+                });
             }
           })
           .catch(error => {
@@ -433,4 +463,54 @@ function checkAuthenticationMiddleware() {
     }
   };
 }
+router.get('/users', (req, res) => {
+  db.User.findAll({
+    include: [
+      {
+        model: db.Post,
+        include: [
+          {
+            model: db.PostComment
+          }
+        ]
+      }
+    ]
+  }).then(users => {
+    const resObj = users.map(user => {
+      //tidy up the user data
+      return Object.assign(
+        {},
+        {
+          user_id: user.id,
+          email: user.email,
+          posts: user.Posts.map(post => {
+            //tidy up the post data
+            return Object.assign(
+              {},
+              {
+                post_id: post.id,
+                added_by: post.added_by,
+                body: post.body,
+                comments: post.PostComments.map(comment => {
+                  //tidy up the comment data
+                  return Object.assign(
+                    {},
+                    {
+                      comment_id: comment.id,
+                      postBody: comment.post_body,
+                      commenter: comment.post_by,
+                      postId: comment.post_id
+                    }
+                  );
+                })
+              }
+            );
+          })
+        }
+      );
+    });
+    res.json(resObj);
+  });
+});
+
 module.exports = router;

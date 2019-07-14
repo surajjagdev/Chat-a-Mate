@@ -33,6 +33,7 @@ const Banner = props => {
       <MobileMenu
         toggleClickHandler={props.toggleClickHandler}
         width={props.width}
+        sideDrawerOpen={props.sideDrawerOpen}
       />
       <div className="userLinks">
         <div className="bannerIcons">
@@ -50,8 +51,23 @@ const Banner = props => {
         <div className="bannerIcons">
           <i className="material-icons">notifications</i>
         </div>
-        <div className="bannerIcons">
-          <i className="material-icons">arrow_drop_down_circle</i>
+        <div
+          className="bannerIcons"
+          style={{
+            backgroundColor: 'black',
+            marginLeft: '15px',
+            height: '20px',
+            width: '60px',
+            marginTop: '2px',
+            color: 'rgba(16, 76, 132, 1)',
+            borderRadius: '5px',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            border: 'none'
+          }}
+          onClick={e => props.logout(e)}
+        >
+          SignOut
         </div>
       </div>
     </div>
