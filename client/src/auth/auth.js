@@ -6,6 +6,7 @@ class Auth {
     this.firstName = 'PlaceHolder';
     this.lastName = 'PlaceHolder';
     this.email = 'PlaceHolder';
+    this.user = '';
     this.image = '';
     this.posts = 0;
     this.likes = 0;
@@ -17,6 +18,7 @@ class Auth {
           return (
             (this.authenticated = true),
             (this.firstName = data.data.details.firstName),
+            (this.user = data.data.user),
             (this.lastName = data.data.details.lastName),
             (this.email = data.data.details.email),
             (this.image = data.data.details.image),
@@ -29,6 +31,7 @@ class Auth {
             (this.authenticated = true),
             (this.firstName = data.data.details.firstName),
             (this.lastName = data.data.details.lastName),
+            (this.user = data.data.user),
             (this.email = data.data.details.email),
             (this.image = data.data.details.image),
             (this.posts = data.data.details.posts),

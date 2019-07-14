@@ -250,54 +250,110 @@ router.put('/api/user/update', authenticationMiddleware(), (req, res) => {
   });
 });
 //====================posts============================================================================//
-router.post(
-  '/api/auth/user/post',
+
+//get all posts from user
+router.get(
+  '/api/auth/user/allposts',
   authenticationMiddleware(),
   (req, res) => {
-    const body = req.body.body;
-    //added_by and user_to will be same if posting status on own profile.
-    const added_by = req.body.added_by;
-    const user_to = req.body.user_to;
-    db.Post.create({
-      body: body,
-      added_by: added_by,
-      user_to: user_to
+    const email = req.body.email;
+    const userId = req.body.userId;
+    db.User.findOne({
+      where: {
+        id: userId
+      }
     })
-      .then(created => {
-        if (created) {
-          return res.json({ success: true, errors: null, details: created });
+      .then(found => {
+        if (found.email === email) {
+          return res.json({
+            success: true,
+            error: null,
+            number_posts: found.number_posts
+          });
         } else {
-          res.json({
+          return res.json({
             success: false,
             error: true,
             errors: {
-              errors: [{ message: 'Server Error saving Post' }]
+              errors: [{ message: 'Server Error getting user  Posts.' }]
             }
           });
         }
       })
       .catch(error => {
+        res.json({ success: false, error: true, errors: error });
+      });
+  }
+);
+//new post update post table, then user number of posts table
+router.post('/api/auth/user/post', authenticationMiddleware(), (req, res) => {
+  const body = req.body.body;
+  //added_by and user_to will be same if posting status on own profile.
+  const added_by = req.body.added_by;
+  const user = req.session.passport.user;
+  const user_to = req.body.user_to;
+  db.Post.create({
+    body: body,
+    added_by: added_by,
+    user_to: user_to
+  })
+    .then(created => {
+      if (!created) {
         return res.json({
           success: false,
           error: true,
-          errors: error
-        });
-      });
-  } /* else {
-    return res.json({
-      success: false,
-      error: true,
-      errors: {
-        errors: [
-          {
-            message: 'Post body is empty. Please write something in it.'
+          errors: {
+            errors: [
+              {
+                message:
+                  'Posts created, but failed to update user number of posts category.'
+              }
+            ]
           }
-        ]
-      },
-      message: 'Post body empty'
+        });
+      } else {
+        db.User.update(
+          {
+            number_posts: 3
+          },
+          {
+            returning: true,
+            where: {
+              id: user
+            }
+          }
+        )
+          .then(found => {
+            if (found) {
+              return res.json({
+                success: true,
+                errors: null,
+                details: created,
+                number_posts: found.number_posts,
+                number_likes: found.number_likes
+              });
+            }
+          })
+          .catch(error => {
+            return res.json({
+              success: false,
+              error: true,
+              errors: error,
+              message:
+                'Posts created, but failed to update user number of posts category.'
+            });
+          });
+      }
+    })
+    .catch(error => {
+      return res.json({
+        success: false,
+        error: true,
+        errors: error,
+        message: 'post error fail'
+      });
     });
-  }*/
-);
+});
 
 //====================Check if user is logged in. If not make them login==============================//
 function authenticationMiddleware() {

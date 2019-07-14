@@ -6,6 +6,7 @@ import MobileMenuLinks from '../components/banner/mobilemenulinks.js';
 import Main from '../main/main.js';
 class Profile extends React.Component {
   state = {
+    user: '',
     search: '',
     firstName: '',
     lastName: '',
@@ -29,7 +30,8 @@ class Profile extends React.Component {
               email: auth.email,
               image: auth.image,
               likes: auth.likes,
-              posts: auth.posts
+              posts: auth.posts,
+              user: auth.user
             },
             () => {
               return console.log(this.state);
@@ -105,6 +107,7 @@ class Profile extends React.Component {
           handleStatus={this.handleStatus}
           sideDrawerOpen={this.state.sideDrawerOpen}
           status={this.state.status}
+          user={this.state.user}
         />
       </div>
     );
