@@ -13,6 +13,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       type: DataTypes.TEXT
     },
+    //userId
     posted_by: {
       allowNull: false,
       type: DataTypes.STRING
