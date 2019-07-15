@@ -2,30 +2,18 @@ import React from 'react';
 import UserProfile from '../components/userprofile/userprofile.js';
 //import AdComponent from '../components/adsense/adsense.js';
 import API from '../utils/api.js';
+import auth from '../auth/auth.js';
 import './main.css';
 class Main extends React.Component {
   state = {};
-  handleSubmit = e => {
+  handlePosts = e => {
     e.preventDefault();
-    API.poststatus({
-      body: this.props.status,
-      added_by: this.props.email,
-      user_to: 'test'
-    })
-      .then(data => {
-        console.log(data);
-        if (data.data.success === true) {
-          console.log('successfful post');
-          this.setState({ status: '' }, () => {
-            this.status.value = '';
-          });
-        } else {
-          console.log('fail post');
-        }
-      })
-      .catch(error => {
-        console.log('error: ', error);
-      });
+    API.getAllPostsFeed({
+      user: this.props.user,
+      public: this.props.showPostsPublic
+    }).then(data => {
+      console.log(data);
+    });
   };
   render() {
     return !this.props.sideDrawerOpen ? (
@@ -98,7 +86,7 @@ class Main extends React.Component {
                   type="submit"
                   id="postButton"
                   onClick={e => {
-                    this.handleSubmit(e);
+                    this.props.handleSubmit(e);
                   }}
                 >
                   <i className="material-icons">send</i>
