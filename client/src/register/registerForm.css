@@ -105,6 +105,8 @@ body {
   height: 35px;
   top: 15px;
   margin-left: 5px;
+  -webkit-border-radius: 50%;
+  border-radius: none;
   /*
   position: relative;
   top: 20px;
@@ -117,6 +119,8 @@ body {
   height: 35px;
   top: 15px;
   margin-left: 5px;
+  -webkit-border-radius: 50%;
+  border-radius: none;
 
   /*
   position: relative;
@@ -210,7 +214,7 @@ body {
     display: none;
   }
   .signIn {
-    width: 80px;
+    width: 55px;
     top: 16px;
   }
   .userName {
@@ -230,6 +234,8 @@ body {
   .emailField,
   .passwordField {
     width: 100px;
+    -webkit-border-radius: 50%;
+    border-radius: none;
   }
   .test {
     color: red;
