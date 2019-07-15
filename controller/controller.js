@@ -4,6 +4,7 @@ const passport = require('passport');
 const express = require('express');
 const router = express.Router();
 const sequelize = require('sequelize');
+const moment = require('moment');
 const saltRounds = 10;
 //=========================Get all users===========================================//
 router.get('/api/users', authenticationMiddleware(), (req, res, next) => {
@@ -329,6 +330,7 @@ router.post('/api/auth/user/post', authenticationMiddleware(), (req, res) => {
             number_posts: sequelize.literal('number_posts + 1')
           },
           {
+            returning: true,
             where: {
               id: user
             }
@@ -463,6 +465,81 @@ function checkAuthenticationMiddleware() {
     }
   };
 }
+//========================continue posting, updating posts, deleting posts====//
+//get posts
+router.get('/api/auth/user/posts', authenticationMiddleware(), (req, res) => {
+  const user = req.query.user;
+  //if user settings public then show public posts, else only from friends added
+  const public = req.query.public;
+  console.log('public: ', public);
+  if (user === req.session.passport.user) {
+    //show all posts created that are also public. Limit to 100 in past date and order descending.
+    if (public === 'true') {
+      db.Post.findAll({
+        include: [
+          {
+            model: db.PostComment
+          }
+        ],
+        where: {
+          public: true,
+          user_closed: false,
+          deleted: false,
+          createdAt: {
+            [sequelize.Op.gte]: moment()
+              .subtract(3, 'days')
+              .toDate()
+          }
+        },
+        limit: 200
+      })
+        .then(found => {
+          console.log(
+            'datonly: ',
+            moment()
+              .subtract(3, 'days')
+              .toDate()
+          );
+          const postsObject = found.map(posts => {
+            return Object.assign(
+              {},
+              {
+                postId: posts.id,
+                body: posts.body,
+                added_by: posts.added_by,
+                user_to: posts.user_to,
+                user_closed: posts.user_closed,
+                deleted: posts.deleted,
+                public: posts.public,
+                likes: posts.likes,
+                createdAt: posts.createdAt
+              }
+            );
+          });
+          res.json({ success: true, posts: postsObject });
+        })
+        .catch(error => {
+          return res.json({ success: false, errors: error });
+        });
+    } //show all posts from friends
+    else {
+      //
+      res.json({ success: true, public: false });
+    }
+  } else {
+    return res.json({
+      success: false,
+      error: true,
+      errors: {
+        errors: [
+          { message: 'The user sigined in and browser user do not match.' }
+        ]
+      }
+    });
+  }
+});
+
+//get all posts from user
 router.get('/users', (req, res) => {
   db.User.findAll({
     include: [
