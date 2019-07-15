@@ -216,6 +216,7 @@ body {
   .signIn {
     width: 55px;
     top: 16px;
+    margin-left: 10px;
   }
   .userName {
     width: 90px;
