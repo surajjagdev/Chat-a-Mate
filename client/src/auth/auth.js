@@ -10,6 +10,9 @@ class Auth {
     this.image = '';
     this.posts = 0;
     this.likes = 0;
+    this.profilepage = true;
+    this.visitingpage = '';
+    this.showPostsPublic = true;
   }
   checkAuth(cb) {
     API.checkauth()
@@ -65,6 +68,41 @@ class Auth {
   logout(logout) {
     this.authenticated = false;
     logout();
+  }
+  poststatus(cb) {
+    const callbackobj = cb();
+    this.posts = callbackobj.posts;
+    this.likes = callbackobj.likes;
+  }
+  visitpage(cb) {
+    //set profile page to false
+    //set the visitingpage to url
+    cb();
+  }
+  returnState() {
+    if (this.authenticated === true) {
+      return {
+        firstName: this.firstName,
+        lastName: this.lastName,
+        email: this.email,
+        user: this.user,
+        likes: this.likes,
+        posts: this.posts,
+        profilepage: this.profilepage,
+        visitingpage: this.visitingpage,
+        showPostsPublic: this.showPostsPublic
+      };
+    }
+  }
+  isVistingAnotherPage() {
+    if (this.visitingpage === '' && this.profilepage === true) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+  pageVisit() {
+    return this.visitingpage;
   }
   isAuthenticated() {
     return this.authenticated;
