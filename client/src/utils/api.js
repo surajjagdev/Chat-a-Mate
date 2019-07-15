@@ -39,5 +39,13 @@ export default {
         email: data.email
       }
     });
+  },
+  getAllPostsFeed: data => {
+    return axios.get('/api/auth/user/posts', {
+      params: {
+        user: data.user,
+        public: data.public
+      }
+    });
   }
 };
