@@ -17,7 +17,8 @@ class Profile extends React.Component {
     posts: 0,
     sideDrawerOpen: false,
     width: window.innerWidth,
-    status: ''
+    status: '',
+    showPostsPublic: true
   };
   componentDidMount() {
     window.addEventListener('resize', this.handleWindowSizeChange);
@@ -32,7 +33,8 @@ class Profile extends React.Component {
               image: auth.image,
               likes: auth.likes,
               posts: auth.posts,
-              user: auth.user
+              user: auth.user,
+              showPostsPublic: auth.showPostsPublic
             },
             () => {
               return console.log(this.state);
@@ -101,6 +103,39 @@ class Profile extends React.Component {
         });
     });
   };
+  handleSubmit = e => {
+    e.preventDefault();
+
+    API.poststatus({
+      body: this.state.status,
+      added_by: this.state.email,
+      user_to: auth.isVistingAnotherPage() ? auth.visitingpage() : 'None'
+    })
+      .then(data => {
+        if (data.data.success === true) {
+          console.log(data.data.number_posts);
+          this.setState({
+            status: '',
+            posts: data.data.number_posts,
+            likes: data.data.number_likes
+          });
+          auth.poststatus(() => {
+            const obj = {
+              posts: data.data.number_posts,
+              likes: data.data.number_likes
+            };
+
+            return obj;
+          });
+          process.nextTick(function() {
+            console.log(auth.returnState());
+          });
+        }
+      })
+      .catch(error => {
+        console.log('error: ', error);
+      });
+  };
   render() {
     return (
       <div className="homePage">
@@ -137,6 +172,8 @@ class Profile extends React.Component {
           status={this.state.status}
           user={this.state.user}
           width={this.state.width}
+          handleSubmit={this.handleSubmit}
+          showPostsPublic={this.state.showPostsPublic}
         />
       </div>
     );
