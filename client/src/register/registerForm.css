@@ -105,7 +105,8 @@ body {
   height: 35px;
   top: 15px;
   margin-left: 5px;
-  -webkit-border-radius: 50%;
+  -webkit-appearance: none;
+  -webkit-border-radius: 0px;
   border-radius: none;
   /*
   position: relative;
@@ -119,7 +120,8 @@ body {
   height: 35px;
   top: 15px;
   margin-left: 5px;
-  -webkit-border-radius: 50%;
+  -webkit-appearance: none;
+  -webkit-border-radius: 0px;
   border-radius: none;
 
   /*
@@ -139,14 +141,6 @@ body {
   color: white;
   border: 1px solid black;
   cursor: pointer;
-  /*
-  position: absolute;
-  height: 27px;
-  top: 25px;
-  margin-left: 245px;
-  background-color: rgba(16, 76, 132, 1);
-  color: white;
-  border: 1px solid black;*/
 }
 .newUserFormSubmit {
   cursor: pointer;
@@ -235,7 +229,8 @@ body {
   .emailField,
   .passwordField {
     width: 100px;
-    -webkit-border-radius: 50%;
+    -webkit-appearance: none;
+    -webkit-border-radius: 0px;
     border-radius: none;
   }
   .test {
