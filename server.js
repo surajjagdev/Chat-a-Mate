@@ -6,7 +6,7 @@ const app = express();
 const path = require('path');
 const PORT = process.env.PORT || 3001;
 const db = require('./models');
-const routes = require('./controller/controller');
+const routes = require('./controller/controller.js').router;
 //Authethication packages
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
@@ -14,6 +14,8 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const sequelize = require('sequelize');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
+//socket auth with passport
+const passportSocketIo = require('passport.socketio');
 //==============Production======================================///
 //serve up static assets production
 if (process.env.NODE_ENV === 'production') {
@@ -43,26 +45,24 @@ const cookieExpirationDays = 365;
 cookieExpirationDate.setDate(
   cookieExpirationDate.getDate() + cookieExpirationDays
 );
-const sessionOptions = {
+const newSessionStoreObject = new SequelizeStore({
+  db: db,
+  table: 'Session',
+  checkExpirationInterval: 20 * 23 * 60 * 1000,
+  expiration: 30 * 24 * 60 * 60 * 1000, //1 month
+  extendedDefaultFields: extendedDefaultFields
+});
+/*const sessionOptions = {
   name: 'backend',
   secret: process.env.SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
     expires: cookieExpirationDate //1 month,
-    /*proxy: true,
-    secureProxy: true,
-    secure: process.env.NODE_ENV === 'production' ? true : false,
-    httpOnly: process.env.NODE_ENV === 'production' ? true : false*/
   },
-  store: new SequelizeStore({
-    db: db,
-    table: 'Session',
-    checkExpirationInterval: 20 * 23 * 60 * 1000,
-    expiration: 30 * 24 * 60 * 60 * 1000, //1 month
-    extendedDefaultFields: extendedDefaultFields
-  })
-};
+  store: newSessionStoreObject
+};*/
+
 //configuration==============================================//
 //cookieparse
 app.use(cookieParser(process.env.SECRET));
@@ -74,18 +74,49 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 //express session. Options in object defined from line 29.
-app.use(session(sessionOptions));
+app.use(
+  session({
+    store: newSessionStoreObject,
+    secret: process.env.SECRET,
+    cookie: {
+      expires: cookieExpirationDate
+    },
+    resave: false,
+    saveUninitialized: false
+  })
+);
 //passport
 app.use(passport.initialize());
 app.use(passport.session());
 //==========local passport login===========================//
 //=========================routes===========================//
 require('./passport/passport')(passport);
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000'); // update to match the domain you will make the request from
+  res.header('Access-Control-Allow-Credentials', true);
+  next();
+});
 app.use(routes);
 //================port server=============================///
 //use routes when made and connect to mysql
-db.sequelize.sync().then(() => {
-  app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
+  db.sequelize.sync().then(() => {
     console.log(`Server listening on port ${PORT}`);
   });
 });
+//socket
+const io = require('socket.io')(server);
+io.use(
+  passportSocketIo.authorize({
+    key: 'backend',
+    secret: process.env.SECRET,
+    store: newSessionStoreObject,
+    cookieParser: cookieParser,
+    //success: live default behaviour
+    fail: (data, message, error, accept) => accept(null, true)
+  })
+);
+module.exports = io;
+
+const socketManager = require('./websocket/socketManager.js');
+io.on('connection', socketManager);

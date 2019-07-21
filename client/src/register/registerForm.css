@@ -210,7 +210,7 @@ body {
   .signIn {
     width: 55px;
     top: 16px;
-    margin-left: 15px;
+    margin-left: 17px;
   }
   .userName {
     width: 90px;
@@ -232,11 +232,6 @@ body {
     -webkit-appearance: none;
     -webkit-border-radius: 0px;
     border-radius: none;
-  }
-  .test {
-    color: red;
-    height: 50px;
-    width: 50px;
   }
   .newUserFormHeader1 {
     margin-left: -40px;
@@ -309,6 +304,12 @@ body {
   input[type='url'] {
     font-size: 16px;
   }
+  input[type='text'],
+  input[type='button'],
+  input[type='submit'] {
+    -webkit-appearance: none;
+    border-radius: 0;
+  }
 }
 
 /* iPhone 6 Plus, iPhone 6s Plus, iPhone 7 Plus portrait/landscape */
@@ -327,5 +328,11 @@ body {
   input[type='email'],
   input[type='url'] {
     font-size: 16px;
+  }
+  input[type='text'],
+  input[type='button'],
+  input[type='submit'] {
+    -webkit-appearance: none;
+    border-radius: 0;
   }
 }

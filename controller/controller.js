@@ -540,6 +540,7 @@ router.get('/api/auth/user/posts', authenticationMiddleware(), (req, res) => {
 });
 
 //get all posts from user
+/*
 router.get('/users', (req, res) => {
   db.User.findAll({
     include: [
@@ -588,6 +589,7 @@ router.get('/users', (req, res) => {
     });
     res.json(resObj);
   });
-});
-
-module.exports = router;
+});*/
+module.exports = {
+  router: router
+};

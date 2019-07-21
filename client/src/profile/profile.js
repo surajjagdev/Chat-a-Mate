@@ -5,6 +5,11 @@ import { Link } from 'react-router-dom';
 import MobileMenuLinks from '../components/banner/mobilemenulinks.js';
 import Main from '../main/main.js';
 import API from '../utils/api.js';
+//socket and events
+import io from 'socket.io-client';
+import { USER_CONNECTED, LOGOUT } from '../events.js';
+//put on process.env after
+const socketUrl = 'http://localhost:3001/';
 class Profile extends React.Component {
   state = {
     user: '',
@@ -18,7 +23,8 @@ class Profile extends React.Component {
     sideDrawerOpen: false,
     width: window.innerWidth,
     status: '',
-    showPostsPublic: true
+    showPostsPublic: true,
+    socket: null
   };
   componentDidMount() {
     window.addEventListener('resize', this.handleWindowSizeChange);
@@ -37,7 +43,7 @@ class Profile extends React.Component {
               showPostsPublic: auth.showPostsPublic
             },
             () => {
-              return console.log(this.state);
+              return this.initSocket();
             }
           );
       }, 1000);
@@ -136,6 +142,24 @@ class Profile extends React.Component {
         console.log('error: ', error);
       });
   };
+
+  //socket functions
+  initSocket = () => {
+    const socket = io(socketUrl);
+    socket.on('connect', () => {
+      console.log('\nsocket connected\n');
+    });
+    this.setState({ socket }, () => {
+      this.setUser(this.state.user);
+    });
+  };
+  setUser = user => {
+    console.log('setuser');
+    const { socket } = this.state;
+    socket.emit(USER_CONNECTED, user);
+  };
+
+  //
   render() {
     return (
       <div className="homePage">
@@ -160,6 +184,23 @@ class Profile extends React.Component {
             logout={this.logout}
           />
         ) : null}
+        <button
+          style={{
+            zIndex: '100000',
+            width: '100px',
+            height: '100px',
+            backgroundColor: 'red',
+            marginTop: '40px'
+          }}
+          type="submit"
+          onClick={e => {
+            e.preventDefault();
+            this.state.socket.emit('greet', this.state.email);
+            console.log(this.state.socket);
+          }}
+        >
+          Click me!
+        </button>
         <Main
           firstName={this.state.firstName}
           lastName={this.state.lastName}
