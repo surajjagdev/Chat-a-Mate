@@ -33,9 +33,11 @@
     "mysql2": "^1.6.5",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
+    "passport.socketio": "^3.7.0",
     "path": "^0.12.7",
     "react-router-dom": "^5.0.0",
     "sequelize": "^5.7.1",
+    "socket.io": "^2.2.0",
     "uuid": "^3.3.2"
   }
 }
