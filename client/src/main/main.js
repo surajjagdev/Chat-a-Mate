@@ -15,6 +15,15 @@ class Main extends React.Component {
       console.log(data);
     });
   };
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    const { socket } = this.props;
+    if (socket !== prevProps.socket) {
+      socket.on('GLOBAL_POSTS', data => {
+        this.props.handleGlobalPosts(data);
+      });
+    }
+  }
   render() {
     return !this.props.sideDrawerOpen ? (
       <div className="mainwrapper">

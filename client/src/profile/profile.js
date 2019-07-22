@@ -7,7 +7,14 @@ import Main from '../main/main.js';
 import API from '../utils/api.js';
 //socket and events
 import io from 'socket.io-client';
-import { USER_CONNECTED, LOGOUT } from '../events.js';
+import {
+  USER_CONNECTED,
+  LOGOUT,
+  USER_POST,
+  USER_DICONNECTED,
+  GLOBAL_POSTS,
+  INITIAL_POSTS
+} from '../events.js';
 //put on process.env after
 const socketUrl = 'http://localhost:3001/';
 class Profile extends React.Component {
@@ -24,6 +31,7 @@ class Profile extends React.Component {
     width: window.innerWidth,
     status: '',
     showPostsPublic: true,
+    globalposts: [],
     socket: null
   };
   componentDidMount() {
@@ -111,8 +119,14 @@ class Profile extends React.Component {
   };
   handleSubmit = e => {
     e.preventDefault();
-
-    API.poststatus({
+    const { socket } = this.state;
+    socket.emit(USER_POST, {
+      body: this.state.status,
+      added_by: this.state.email,
+      user_to: auth.isVistingAnotherPage() ? auth.visitingpage() : 'None',
+      user: this.state.user
+    });
+    /*API.poststatus({
       body: this.state.status,
       added_by: this.state.email,
       user_to: auth.isVistingAnotherPage() ? auth.visitingpage() : 'None'
@@ -140,7 +154,7 @@ class Profile extends React.Component {
       })
       .catch(error => {
         console.log('error: ', error);
-      });
+      });*/
   };
 
   //socket functions
@@ -148,17 +162,60 @@ class Profile extends React.Component {
     const socket = io(socketUrl);
     socket.on('connect', () => {
       console.log('\nsocket connected\n');
-    });
-    this.setState({ socket }, () => {
-      this.setUser(this.state.user);
+      this.setState({ socket }, () => {
+        this.setUser(this.state.user);
+      });
     });
   };
   setUser = user => {
-    console.log('setuser');
+    //reference point of this
+    const that = this;
     const { socket } = this.state;
     socket.emit(USER_CONNECTED, user);
+    process.nextTick(function() {
+      socket.on(INITIAL_POSTS, data => {
+        return that.handleGlobalPosts(data);
+      });
+    });
   };
+  handleGlobalPosts = async data => {
+    const { globalposts } = this.state;
+    let chat = [];
+    if (globalposts.length === 0) {
+      data.map(posts => {
+        if (posts.success === true) {
+          chat.push(posts.posts);
+        }
+      });
+      return await this.setState({ globalposts: chat }, () => {
+        console.log(this.state.globalposts);
+      });
+    } else {
+      globalposts.map(posts => {
+        chat.push(posts);
+      });
+      if (data.success === true) {
+        chat.push(data.post);
+        //update likes and posts
+        auth.poststatus(() => {
+          const obj = {
+            posts: data.number_posts_total,
+            likes: data.number_likes_total
+          };
 
+          return obj;
+        });
+        this.setState({
+          status: '',
+          likes: data.number_likes_total,
+          posts: data.number_posts_total
+        });
+      }
+      return await this.setState({ globalposts: chat }, () => {
+        console.log(this.state.globalposts);
+      });
+    }
+  };
   //
   render() {
     return (
@@ -184,23 +241,6 @@ class Profile extends React.Component {
             logout={this.logout}
           />
         ) : null}
-        <button
-          style={{
-            zIndex: '100000',
-            width: '100px',
-            height: '100px',
-            backgroundColor: 'red',
-            marginTop: '40px'
-          }}
-          type="submit"
-          onClick={e => {
-            e.preventDefault();
-            this.state.socket.emit('greet', this.state.email);
-            console.log(this.state.socket);
-          }}
-        >
-          Click me!
-        </button>
         <Main
           firstName={this.state.firstName}
           lastName={this.state.lastName}
@@ -215,6 +255,8 @@ class Profile extends React.Component {
           width={this.state.width}
           handleSubmit={this.handleSubmit}
           showPostsPublic={this.state.showPostsPublic}
+          socket={this.state.socket}
+          handleGlobalPosts={this.handleGlobalPosts}
         />
       </div>
     );

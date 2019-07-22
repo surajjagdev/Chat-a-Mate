@@ -443,6 +443,7 @@ function ensureUserMiddleware() {
 }
 //=======================Register Middleware========================================//
 //Check if user exists in database. If Not register them. If so deny registeration.
+
 function checkAuthenticationMiddleware() {
   return (req, res, next) => {
     if (req.isAuthenticated()) {
@@ -467,6 +468,7 @@ function checkAuthenticationMiddleware() {
 }
 //========================continue posting, updating posts, deleting posts====//
 //get posts
+/*
 router.get('/api/auth/user/posts', authenticationMiddleware(), (req, res) => {
   const user = req.query.user;
   //if user settings public then show public posts, else only from friends added
@@ -540,7 +542,7 @@ router.get('/api/auth/user/posts', authenticationMiddleware(), (req, res) => {
 });
 
 //get all posts from user
-/*
+
 router.get('/users', (req, res) => {
   db.User.findAll({
     include: [

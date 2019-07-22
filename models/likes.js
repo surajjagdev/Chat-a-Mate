@@ -9,10 +9,12 @@ module.exports = function(sequelize, DataTypes) {
         notNull: true
       }
     },
+    //userId
     userName: {
       allowNull: false,
       type: DataTypes.STRING
     },
+    //postId
     post_id: {
       allowNull: false,
       type: DataTypes.INTEGER
