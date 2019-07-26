@@ -4,8 +4,8 @@ import UserProfile from '../components/userprofile/userprofile.js';
 import API from '../utils/api.js';
 import auth from '../auth/auth.js';
 import './main.css';
+import StatusPost from '../components/statusposts/statusposts.js';
 class Main extends React.Component {
-  state = {};
   handlePosts = e => {
     e.preventDefault();
     API.getAllPostsFeed({
@@ -15,15 +15,6 @@ class Main extends React.Component {
       console.log(data);
     });
   };
-  componentDidUpdate(prevProps) {
-    // Typical usage (don't forget to compare props):
-    const { socket } = this.props;
-    if (socket !== prevProps.socket) {
-      socket.on('GLOBAL_POSTS', data => {
-        this.props.handleGlobalPosts(data);
-      });
-    }
-  }
   render() {
     return !this.props.sideDrawerOpen ? (
       <div className="mainwrapper">
@@ -102,6 +93,30 @@ class Main extends React.Component {
                 </button>
               </div>
             </div>
+            {this.props.globalposts.length > 0
+              ? this.props.globalposts.map(posts => {
+                  return (
+                    <div
+                      key={posts.postId}
+                      className="main_user_stories"
+                      style={{
+                        backgroundColor: 'white',
+                        borderRadius: '5px',
+                        border: '1px solid gray',
+                        marginTop: '3px'
+                      }}
+                    >
+                      <StatusPost
+                        body={posts.body}
+                        addedBy={posts.added_by}
+                        comment={posts.comments}
+                        createdAt={posts.createdAt}
+                        user_to={posts.user_to}
+                      />
+                    </div>
+                  );
+                })
+              : null}
           </div>
           <div className="mainads" style={{ backgroundColor: 'green' }} />
         </div>

@@ -87,7 +87,6 @@ module.exports = function(socket) {
       socket.request.user.logged_in === true &&
       user === socket.request.username
     ) {
-      console.log('hello: ', body, added_by, user_to, user);
       if (body !== '' && added_by !== '' && user_to !== '' && user !== '') {
         //
         db.Post.create({
@@ -119,10 +118,11 @@ module.exports = function(socket) {
                       .then(foundUpdated => {
                         if (foundUpdated) {
                           //change to socket emit
-                          return socket.emit(GLOBAL_POSTS, {
+                          socket.broadcast.emit(GLOBAL_POSTS, {
                             success: true,
                             errors: null,
-                            post: {
+                            global: true,
+                            posts: {
                               postId: created.id,
                               body: created.body,
                               added_by: created.added_by,
@@ -130,7 +130,24 @@ module.exports = function(socket) {
                               public: created.public,
                               user_closed: created.user_closed,
                               user_to: created.user_to,
-                              likes: created.likes
+                              likes: created.likes,
+                              createdAt: created.createdAt
+                            }
+                          });
+                          return socket.emit(MESSAGE_SENT, {
+                            success: true,
+                            errors: null,
+                            global: false,
+                            posts: {
+                              postId: created.id,
+                              body: created.body,
+                              added_by: created.added_by,
+                              deleted: created.deleted,
+                              public: created.public,
+                              user_closed: created.user_closed,
+                              user_to: created.user_to,
+                              likes: created.likes,
+                              createdAt: created.createdAt
                             },
                             number_posts_total: foundUpdated.number_posts,
                             number_likes_total: foundUpdated.number_likes

@@ -13,27 +13,42 @@ import {
   USER_POST,
   USER_DICONNECTED,
   GLOBAL_POSTS,
-  INITIAL_POSTS
+  INITIAL_POSTS,
+  MESSAGE_SENT
 } from '../events.js';
 //put on process.env after
 const socketUrl = 'http://localhost:3001/';
 class Profile extends React.Component {
-  state = {
-    user: '',
-    search: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    image: '',
-    likes: 0,
-    posts: 0,
-    sideDrawerOpen: false,
-    width: window.innerWidth,
-    status: '',
-    showPostsPublic: true,
-    globalposts: [],
-    socket: null
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      user: '',
+      search: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      image: '',
+      likes: 0,
+      posts: 0,
+      sideDrawerOpen: false,
+      width: window.innerWidth,
+      status: '',
+      showPostsPublic: true,
+      globalposts: [],
+      socket: null
+    };
+
+    io(socketUrl).on(INITIAL_POSTS, data => {
+      return this.handleGlobalPosts(data);
+    });
+    io(socketUrl).on(GLOBAL_POSTS, data => {
+      return this.handleGlobalPosts([data]);
+    });
+    io(socketUrl).on(MESSAGE_SENT, data => {
+      console.log('message sent');
+      return this.handleMessageSent([data]);
+    });
+  }
   componentDidMount() {
     window.addEventListener('resize', this.handleWindowSizeChange);
     const details = () => {
@@ -126,42 +141,12 @@ class Profile extends React.Component {
       user_to: auth.isVistingAnotherPage() ? auth.visitingpage() : 'None',
       user: this.state.user
     });
-    /*API.poststatus({
-      body: this.state.status,
-      added_by: this.state.email,
-      user_to: auth.isVistingAnotherPage() ? auth.visitingpage() : 'None'
-    })
-      .then(data => {
-        if (data.data.success === true) {
-          console.log(data.data.number_posts);
-          this.setState({
-            status: '',
-            posts: data.data.number_posts,
-            likes: data.data.number_likes
-          });
-          auth.poststatus(() => {
-            const obj = {
-              posts: data.data.number_posts,
-              likes: data.data.number_likes
-            };
-
-            return obj;
-          });
-          process.nextTick(function() {
-            console.log(auth.returnState());
-          });
-        }
-      })
-      .catch(error => {
-        console.log('error: ', error);
-      });*/
   };
 
   //socket functions
   initSocket = () => {
     const socket = io(socketUrl);
     socket.on('connect', () => {
-      console.log('\nsocket connected\n');
       this.setState({ socket }, () => {
         this.setUser(this.state.user);
       });
@@ -172,17 +157,44 @@ class Profile extends React.Component {
     const that = this;
     const { socket } = this.state;
     socket.emit(USER_CONNECTED, user);
-    process.nextTick(function() {
-      socket.on(INITIAL_POSTS, data => {
-        return that.handleGlobalPosts(data);
-      });
-    });
   };
-  handleGlobalPosts = async data => {
+  handleMessageSent = async data => {
+    console.log('hanlde message sent');
     const { globalposts } = this.state;
     let chat = [];
     if (globalposts.length === 0) {
-      data.map(posts => {
+      await data.map(posts => {
+        if (data.success === true) {
+          chat.push(posts.posts);
+        }
+      });
+      return await this.setState({
+        globalposts: chat,
+        status: '',
+        likes: data[0].number_likes_total,
+        posts: data[0].number_posts_total
+      });
+    } else {
+      await globalposts.map(posts => {
+        chat.push(posts);
+      });
+      if (data[0].success === true) {
+        chat.push(data[0].posts);
+      }
+      return await this.setState({
+        globalposts: chat,
+        status: '',
+        likes: data[0].number_likes_total,
+        posts: data[0].number_posts_total
+      });
+    }
+  };
+  handleGlobalPosts = async data => {
+    console.log('handle gloval posts');
+    const { globalposts } = this.state;
+    let chat = [];
+    if (globalposts.length === 0) {
+      await data.map(posts => {
         if (posts.success === true) {
           chat.push(posts.posts);
         }
@@ -191,33 +203,25 @@ class Profile extends React.Component {
         console.log(this.state.globalposts);
       });
     } else {
-      globalposts.map(posts => {
+      await globalposts.map(posts => {
         chat.push(posts);
       });
-      if (data.success === true) {
-        chat.push(data.post);
+      if (data[0].success === true) {
+        chat.push(data[0].posts);
         //update likes and posts
-        auth.poststatus(() => {
-          const obj = {
-            posts: data.number_posts_total,
-            likes: data.number_likes_total
-          };
-
-          return obj;
-        });
-        this.setState({
-          status: '',
-          likes: data.number_likes_total,
-          posts: data.number_posts_total
-        });
       }
       return await this.setState({ globalposts: chat }, () => {
         console.log(this.state.globalposts);
       });
     }
   };
-  //
   render() {
+    /* if (this.state.socket !== null) {
+      const { socket } = this.state;
+      socket.on(INITIAL_POSTS, data => {
+        return this.handleGlobalPosts(data);
+      });
+    }*/
     return (
       <div className="homePage">
         <Banner
@@ -257,6 +261,7 @@ class Profile extends React.Component {
           showPostsPublic={this.state.showPostsPublic}
           socket={this.state.socket}
           handleGlobalPosts={this.handleGlobalPosts}
+          globalposts={this.state.globalposts}
         />
       </div>
     );
