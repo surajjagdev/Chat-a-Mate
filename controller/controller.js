@@ -6,6 +6,25 @@ const router = express.Router();
 const sequelize = require('sequelize');
 const moment = require('moment');
 const saltRounds = 10;
+const io = require('../server.js');
+const {
+  INITIAL_POSTS,
+  GLOBAL_POSTS,
+  ERROR,
+  USER_POST,
+  USER_CONNECTED,
+  MESSAGE_RECEIVED,
+  MESSAGE_SENT,
+  USER_DICONNECTED,
+  TYPING,
+  VERIFY_USER,
+  LOGOUT
+} = require('../client/src/events.js');
+let connectedUsers = {};
+//io function//
+function ioScoped(event, data) {
+  return io.emit(event, data);
+}
 //=========================Get all users===========================================//
 router.get('/api/users', authenticationMiddleware(), (req, res, next) => {
   db.User.findAll({})
@@ -297,96 +316,6 @@ router.get(
       });
   }
 );
-//new post update post table, then user number of posts table
-router.post('/api/auth/user/post', authenticationMiddleware(), (req, res) => {
-  const body = req.body.body;
-  //added_by and user_to will be same if posting status on own profile.
-  const added_by = req.body.added_by;
-  const user = req.session.passport.user;
-  const user_to = req.body.user_to;
-  db.Post.create({
-    body: body,
-    added_by: added_by,
-    user_to: user_to,
-    UserId: user
-  })
-    .then(created => {
-      if (!created) {
-        return res.json({
-          success: false,
-          error: true,
-          errors: {
-            errors: [
-              {
-                message:
-                  'Posts created, but failed to update user number of posts category.'
-              }
-            ]
-          }
-        });
-      } else {
-        db.User.update(
-          {
-            number_posts: sequelize.literal('number_posts + 1')
-          },
-          {
-            returning: true,
-            where: {
-              id: user
-            }
-          }
-        )
-          .then(found => {
-            console.log('found yo ', found);
-            //if updated make another db call to user
-            if (found) {
-              db.User.findOne({
-                where: {
-                  id: user
-                }
-              })
-                .then(foundUpdated => {
-                  if (foundUpdated) {
-                    return res.json({
-                      success: true,
-                      errors: null,
-                      details: created,
-                      number_posts: foundUpdated.number_posts,
-                      number_likes: foundUpdated.number_likes
-                    });
-                  }
-                })
-                .catch(error => {
-                  return res.json({
-                    success: false,
-                    error: true,
-                    errors: error,
-                    message: 'Posts created, user update failed however.'
-                  });
-                });
-            }
-          })
-          .catch(error => {
-            return res.json({
-              success: false,
-              error: true,
-              errors: error,
-              message:
-                'Posts created, but failed to update user number of posts category.'
-            });
-          });
-      }
-    })
-    .catch(error => {
-      return res.json({
-        success: false,
-        error: true,
-        errors: error,
-        message: 'post error fail'
-      });
-    });
-});
-
 //====================Check if user is logged in. If not make them login==============================//
 function authenticationMiddleware() {
   return (req, res, next) => {
@@ -466,46 +395,37 @@ function checkAuthenticationMiddleware() {
     }
   };
 }
-//========================continue posting, updating posts, deleting posts====//
-//get posts
-/*
-router.get('/api/auth/user/posts', authenticationMiddleware(), (req, res) => {
-  const user = req.query.user;
-  //if user settings public then show public posts, else only from friends added
-  const public = req.query.public;
-  console.log('public: ', public);
-  if (user === req.session.passport.user) {
-    //show all posts created that are also public. Limit to 100 in past date and order descending.
-    if (public === 'true') {
-      db.Post.findAll({
-        include: [
-          {
-            model: db.PostComment
-          }
-        ],
-        where: {
-          public: true,
-          user_closed: false,
-          deleted: false,
-          createdAt: {
-            [sequelize.Op.gte]: moment()
-              .subtract(3, 'days')
-              .toDate()
-          }
-        },
-        limit: 200
-      })
-        .then(found => {
-          console.log(
-            'datonly: ',
-            moment()
-              .subtract(3, 'days')
-              .toDate()
-          );
-          const postsObject = found.map(posts => {
-            return Object.assign(
-              {},
-              {
+function addUser(userList, user) {
+  let newList = Object.assign({}, userList);
+  newList['id'] = user;
+  console.log(newList);
+  return newList;
+}
+
+const newsocketmanager = function(socket) {
+  socket.request.user.logged_in = true;
+  sendStatus = function(s) {
+    socket.emit(ERROR, s);
+  };
+  if (socket.request.user && socket.request.user.logged_in === true) {
+    db.Post.findAll({
+      include: [{ model: db.PostComment }],
+      where: {
+        public: true,
+        user_closed: false,
+        deleted: false
+      },
+      limit: 10
+    })
+      .then(found => {
+        //
+        const postsObject = found.map(posts => {
+          return Object.assign(
+            {},
+            {
+              success: true,
+              errors: null,
+              posts: {
                 postId: posts.id,
                 body: posts.body,
                 added_by: posts.added_by,
@@ -514,64 +434,8 @@ router.get('/api/auth/user/posts', authenticationMiddleware(), (req, res) => {
                 deleted: posts.deleted,
                 public: posts.public,
                 likes: posts.likes,
-                createdAt: posts.createdAt
-              }
-            );
-          });
-          res.json({ success: true, posts: postsObject });
-        })
-        .catch(error => {
-          return res.json({ success: false, errors: error });
-        });
-    } //show all posts from friends
-    else {
-      //
-      res.json({ success: true, public: false });
-    }
-  } else {
-    return res.json({
-      success: false,
-      error: true,
-      errors: {
-        errors: [
-          { message: 'The user sigined in and browser user do not match.' }
-        ]
-      }
-    });
-  }
-});
-
-//get all posts from user
-
-router.get('/users', (req, res) => {
-  db.User.findAll({
-    include: [
-      {
-        model: db.Post,
-        include: [
-          {
-            model: db.PostComment
-          }
-        ]
-      }
-    ]
-  }).then(users => {
-    const resObj = users.map(user => {
-      //tidy up the user data
-      return Object.assign(
-        {},
-        {
-          user_id: user.id,
-          email: user.email,
-          posts: user.Posts.map(post => {
-            //tidy up the post data
-            return Object.assign(
-              {},
-              {
-                post_id: post.id,
-                added_by: post.added_by,
-                body: post.body,
-                comments: post.PostComments.map(comment => {
+                createdAt: posts.createdAt,
+                comments: posts.PostComments.map(comment => {
                   //tidy up the comment data
                   return Object.assign(
                     {},
@@ -584,14 +448,147 @@ router.get('/users', (req, res) => {
                   );
                 })
               }
-            );
-          })
-        }
-      );
-    });
-    res.json(resObj);
+            }
+          );
+        });
+        //
+        socket.emit(INITIAL_POSTS, postsObject);
+      })
+      .catch(error => {
+        //
+        socket.emit(ERROR, error);
+      });
+  }
+  socket.on(USER_CONNECTED, user => {
+    if (socket.request.user) {
+      connectedUsers = addUser(connectedUsers, user);
+      console.log('connected users:', connectedUsers);
+      socket.emit('connectedusers', { connectedUsers, socketId: socket.id });
+      return (socket.request.username = user);
+    }
   });
-});*/
+  router.post(
+    '/api/auth/user/newpost',
+    authenticationMiddleware(),
+    (req, res) => {
+      const { body, added_by, user_to, user } = req.body;
+      if (
+        socket.request.user.logged_in === true &&
+        user === req.session.passport.user &&
+        body.length > 0 &&
+        added_by.length > 0 &&
+        user_to.length > 0
+      ) {
+        db.Post.create({
+          body: body,
+          added_by: added_by,
+          user_to: user_to,
+          UserId: user
+        })
+          .then(created => {
+            if (created) {
+              db.User.update(
+                {
+                  number_posts: sequelize.literal('number_posts + 1')
+                },
+                {
+                  returning: true,
+                  where: { id: user }
+                }
+              )
+                .then(found => {
+                  if (found) {
+                    db.User.findOne({ where: { id: user } })
+                      .then(foundUpdated => {
+                        return (
+                          socket.broadcast.emit(MESSAGE_SENT, {
+                            success: true,
+                            errors: null,
+                            global: false,
+                            posts: {
+                              postId: created.id,
+                              body: created.body,
+                              added_by: created.added_by,
+                              deleted: created.deleted,
+                              public: created.public,
+                              user_closed: created.user_closed,
+                              user_to: created.user_to,
+                              likes: created.likes,
+                              createdAt: created.createdAt
+                            }
+                          }),
+                          res.json({
+                            success: true,
+                            errors: null,
+                            global: false,
+                            posts: {
+                              postId: created.id,
+                              body: created.body,
+                              added_by: created.added_by,
+                              deleted: created.deleted,
+                              public: created.public,
+                              user_closed: created.user_closed,
+                              user_to: created.user_to,
+                              likes: created.likes,
+                              createdAt: created.createdAt
+                            },
+                            number_posts_total: foundUpdated.number_posts,
+                            number_likes_total: foundUpdated.number_likes
+                          })
+                        );
+                      })
+                      .catch(error3 => {
+                        return res.json({
+                          success: false,
+                          error: true,
+                          errors: {
+                            errors: [
+                              {
+                                message:
+                                  'post created and user updated, but not returned.'
+                              }
+                            ]
+                          },
+                          message: error3
+                        });
+                      });
+                  }
+                })
+                .catch(error2 => {
+                  return res.json({
+                    success: false,
+                    error: true,
+                    errors: {
+                      errors: [
+                        {
+                          message: 'post created, but user not updated.'
+                        }
+                      ]
+                    },
+                    message: error2
+                  });
+                });
+            }
+          })
+          .catch(error1 => {
+            return res.json({
+              success: false,
+              error: true,
+              errors: {
+                errors: [
+                  {
+                    message: 'Post not created'
+                  }
+                ]
+              },
+              message: error1
+            });
+          });
+      }
+    }
+  );
+};
 module.exports = {
-  router: router
+  router: router,
+  newsocketmanager: newsocketmanager
 };

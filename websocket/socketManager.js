@@ -1,4 +1,4 @@
-const io = require('../server.js').io;
+const io = require('../server.js');
 const db = require('../models');
 const sequelize = require('sequelize');
 const {
@@ -14,6 +14,7 @@ const {
   VERIFY_USER,
   LOGOUT
 } = require('../client/src/events.js');
+let connectedUsers = {};
 module.exports = function(socket) {
   socket.request.user.logged_in = true;
   sendStatus = function(s) {
@@ -75,6 +76,9 @@ module.exports = function(socket) {
   //user connected to socket
   socket.on(USER_CONNECTED, user => {
     if (socket.request.user) {
+      connectedUsers = addUser(connectedUsers, user);
+      console.log('connected users:', connectedUsers);
+      io.emit('connectedusers', { connectedUsers, socketId: socket.id });
       return (socket.request.username = user);
     }
   });
@@ -118,23 +122,25 @@ module.exports = function(socket) {
                       .then(foundUpdated => {
                         if (foundUpdated) {
                           //change to socket emit
-                          socket.broadcast.emit(GLOBAL_POSTS, {
-                            success: true,
-                            errors: null,
-                            global: true,
-                            posts: {
-                              postId: created.id,
-                              body: created.body,
-                              added_by: created.added_by,
-                              deleted: created.deleted,
-                              public: created.public,
-                              user_closed: created.user_closed,
-                              user_to: created.user_to,
-                              likes: created.likes,
-                              createdAt: created.createdAt
-                            }
-                          });
-                          return socket.emit(MESSAGE_SENT, {
+                          /* if (user !== request.socket.user) {
+                            socket.broadcast.emit(GLOBAL_POSTS, {
+                              success: true,
+                              errors: null,
+                              global: true,
+                              posts: {
+                                postId: created.id,
+                                body: created.body,
+                                added_by: created.added_by,
+                                deleted: created.deleted,
+                                public: created.public,
+                                user_closed: created.user_closed,
+                                user_to: created.user_to,
+                                likes: created.likes,
+                                createdAt: created.createdAt
+                              }
+                            });
+                          }*/
+                          return io.emit(MESSAGE_SENT, {
                             success: true,
                             errors: null,
                             global: false,
@@ -195,3 +201,9 @@ module.exports = function(socket) {
     }
   });
 };
+function addUser(userList, user) {
+  let newList = Object.assign({}, userList);
+  newList['id'] = user;
+  console.log(newList);
+  return newList;
+}

@@ -7,6 +7,7 @@ const path = require('path');
 const PORT = process.env.PORT || 3001;
 const db = require('./models');
 const routes = require('./controller/controller.js').router;
+const newSocketManager = require('./controller/controller.js').newsocketmanager;
 //Authethication packages
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
@@ -118,5 +119,5 @@ io.use(
 );
 module.exports = io;
 
-const socketManager = require('./websocket/socketManager.js');
-io.on('connection', socketManager);
+//const socketManager = require('./websocket/socketManager.js');
+io.sockets.on('connection', newSocketManager);

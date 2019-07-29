@@ -21,7 +21,7 @@ export default {
     return axios.get('/api/auth/user/authcheck');
   },
   poststatus: data => {
-    return axios.post('/api/auth/user/post', data);
+    return axios.post('/api/auth/user/newpost', data);
   },
   updateimage: data => {
     return axios.put('/api/user/update', {

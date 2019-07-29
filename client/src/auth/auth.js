@@ -70,7 +70,7 @@ class Auth {
     logout();
   }
   poststatus(cb) {
-    const callbackobj = cb();
+    let callbackobj = cb();
     this.posts = callbackobj.posts;
     this.likes = callbackobj.likes;
   }
