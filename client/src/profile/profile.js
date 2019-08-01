@@ -18,8 +18,7 @@ import {
 } from '../events.js';
 //put on process.env after
 //const socketUrl = 'http://localhost:3001/';
-const socketUrl =
-  'ws://chat-a-mate.herokuapp.com/socket.io/?EIO=4&transport=websocket';
+const socketUrl = io();
 class Profile extends React.Component {
   constructor(props) {
     super(props);
@@ -39,14 +38,15 @@ class Profile extends React.Component {
       globalposts: [],
       socket: null
     };
-    io(socketUrl).on(INITIAL_POSTS, data => {
+    socketUrl.on(INITIAL_POSTS, data => {
+      console.log('intial');
       return this.handleGlobalPosts(data);
     });
-    io(socketUrl).on(MESSAGE_SENT, data => {
+    socketUrl.on(MESSAGE_SENT, data => {
       console.log('message sent');
       return this.handleMessageSent([data]);
     });
-    io(socketUrl).on('connectedusers', data => {
+    socketUrl.on('connectedusers', data => {
       console.log('connectedusers:', data);
     });
   }
