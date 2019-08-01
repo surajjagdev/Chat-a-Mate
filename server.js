@@ -101,7 +101,7 @@ app.use(routes);
 //================port server=============================///
 //use routes when made and connect to mysql
 const server = app.listen(PORT, () => {
-  db.sequelize.sync().then(() => {
+  db.sequelize.sync({ force: true }).then(() => {
     console.log(`Server listening on port ${PORT}`);
   });
 });
@@ -119,5 +119,4 @@ io.use(
 );
 module.exports = io;
 
-//const socketManager = require('./websocket/socketManager.js');
 io.sockets.on('connection', newSocketManager);
