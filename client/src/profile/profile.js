@@ -17,7 +17,9 @@ import {
   MESSAGE_SENT
 } from '../events.js';
 //put on process.env after
-const socketUrl = 'http://localhost:3001/';
+//const socketUrl = 'http://localhost:3001/';
+const socketUrl =
+  'ws://chat-a-mate.herokuapp.com/socket.io/?EIO=4&transport=websocket';
 class Profile extends React.Component {
   constructor(props) {
     super(props);
