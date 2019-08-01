@@ -101,7 +101,7 @@ app.use(routes);
 //================port server=============================///
 //use routes when made and connect to mysql
 const server = app.listen(PORT, () => {
-  db.sequelize.sync({ force: true }).then(() => {
+  db.sequelize.sync().then(() => {
     console.log(`Server listening on port ${PORT}`);
   });
 });
