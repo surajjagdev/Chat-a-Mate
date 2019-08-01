@@ -47,5 +47,8 @@ export default {
         public: data.public
       }
     });
+  },
+  intialPosts: () => {
+    return axios.get('/api/user/intialposts');
   }
 };

@@ -10,15 +10,10 @@ import io from 'socket.io-client';
 import {
   USER_CONNECTED,
   LOGOUT,
-  USER_POST,
-  USER_DICONNECTED,
-  GLOBAL_POSTS,
   INITIAL_POSTS,
   MESSAGE_SENT
 } from '../events.js';
-//put on process.env after
-//const socketUrl = 'http://localhost:3001/';
-const socketUrl = io();
+const socketUrl = 'http://localhost:3001/';
 class Profile extends React.Component {
   constructor(props) {
     super(props);
@@ -38,19 +33,16 @@ class Profile extends React.Component {
       globalposts: [],
       socket: null
     };
-    socketUrl.on(INITIAL_POSTS, data => {
-      console.log('intial');
-      return this.handleGlobalPosts(data);
-    });
-    socketUrl.on(MESSAGE_SENT, data => {
+    io(socketUrl).on(MESSAGE_SENT, data => {
       console.log('message sent');
       return this.handleMessageSent([data]);
     });
-    socketUrl.on('connectedusers', data => {
+    io(socketUrl).on('connectedusers', data => {
       console.log('connectedusers:', data);
     });
   }
   componentDidMount() {
+    this.handleIntialPosts();
     window.addEventListener('resize', this.handleWindowSizeChange);
     const details = () => {
       setTimeout(() => {
@@ -133,6 +125,11 @@ class Profile extends React.Component {
         });
     });
   };
+  handleIntialPosts = () => {
+    API.intialPosts().then(data => {
+      return this.handleGlobalPosts([data.data]);
+    });
+  };
   handleSubmit = e => {
     e.preventDefault();
     console.log('submit');
@@ -172,54 +169,25 @@ class Profile extends React.Component {
     socket.emit(USER_CONNECTED, user);
   };
   handleMessageSent = async data => {
-    const { globalposts } = this.state;
-    let chat = [];
-    if (globalposts.length === 0) {
-      data.map(posts => {
-        if (data[0].success === true) {
-          chat.push(posts.posts);
-        }
-      });
-      return await this.setState({
-        globalposts: chat,
-        status: ''
-      });
-    } else {
-      await globalposts.map(posts => {
-        chat.push(posts);
-      });
+    data.map(posts => {
       if (data[0].success === true) {
-        chat.push(data[0].posts);
+        this.setState({
+          globalposts: [posts.posts, ...this.state.globalposts],
+          status: ''
+        });
       }
-      return await this.setState({
-        globalposts: chat,
-        status: ''
-      });
-    }
+    });
   };
   handleGlobalPosts = async data => {
-    console.log('handle gloval posts');
     const { globalposts } = this.state;
-    let chat = [];
     if (globalposts.length === 0) {
-      await data.map(posts => {
+      data.map(posts => {
         if (posts.success === true) {
-          chat.push(posts.posts);
+          this.setState({
+            globalposts: posts.posts,
+            ...this.state.globalposts
+          });
         }
-      });
-      return await this.setState({ globalposts: chat }, () => {
-        console.log(this.state.globalposts);
-      });
-    } else {
-      await globalposts.map(posts => {
-        chat.push(posts);
-      });
-      if (data[0].success === true) {
-        chat.push(data[0].posts);
-        //update likes and posts
-      }
-      return await this.setState({ globalposts: chat }, () => {
-        console.log(this.state.globalposts);
       });
     }
   };

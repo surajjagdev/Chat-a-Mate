@@ -316,6 +316,55 @@ router.get(
       });
   }
 );
+//================================Intial Posts=================================================================//
+router.get('/api/user/intialposts', authenticationMiddleware(), (req, res) => {
+  db.Post.findAll({
+    include: [{ model: db.PostComment }],
+    where: {
+      public: true,
+      user_closed: false,
+      deleted: false
+    },
+    limit: 10
+  })
+    .then(found => {
+      //
+      const postsObject = found.map(posts => {
+        return Object.assign(
+          {},
+          {
+            postId: posts.id,
+            body: posts.body,
+            added_by: posts.added_by,
+            user_to: posts.user_to,
+            user_closed: posts.user_closed,
+            deleted: posts.deleted,
+            public: posts.public,
+            likes: posts.likes,
+            createdAt: posts.createdAt,
+            comments: posts.PostComments.map(comment => {
+              //tidy up the comment data
+              return Object.assign(
+                {},
+                {
+                  comment_id: comment.id,
+                  postBody: comment.post_body,
+                  commenter: comment.post_by,
+                  postId: comment.post_id
+                }
+              );
+            })
+          }
+        );
+      });
+      //
+      return res.json({ success: true, posts: postsObject });
+    })
+    .catch(error => {
+      return res.json({ success: false, error: true, errors: error });
+    });
+});
+
 //====================Check if user is logged in. If not make them login==============================//
 function authenticationMiddleware() {
   return (req, res, next) => {
@@ -407,58 +456,6 @@ const newsocketmanager = function(socket) {
   sendStatus = function(s) {
     socket.emit(ERROR, s);
   };
-  if (socket.request.user && socket.request.user.logged_in === true) {
-    db.Post.findAll({
-      include: [{ model: db.PostComment }],
-      where: {
-        public: true,
-        user_closed: false,
-        deleted: false
-      },
-      limit: 10
-    })
-      .then(found => {
-        //
-        const postsObject = found.map(posts => {
-          return Object.assign(
-            {},
-            {
-              success: true,
-              errors: null,
-              posts: {
-                postId: posts.id,
-                body: posts.body,
-                added_by: posts.added_by,
-                user_to: posts.user_to,
-                user_closed: posts.user_closed,
-                deleted: posts.deleted,
-                public: posts.public,
-                likes: posts.likes,
-                createdAt: posts.createdAt,
-                comments: posts.PostComments.map(comment => {
-                  //tidy up the comment data
-                  return Object.assign(
-                    {},
-                    {
-                      comment_id: comment.id,
-                      postBody: comment.post_body,
-                      commenter: comment.post_by,
-                      postId: comment.post_id
-                    }
-                  );
-                })
-              }
-            }
-          );
-        });
-        //
-        socket.emit(INITIAL_POSTS, postsObject);
-      })
-      .catch(error => {
-        //
-        socket.emit(ERROR, error);
-      });
-  }
   socket.on(USER_CONNECTED, user => {
     if (socket.request.user) {
       connectedUsers = addUser(connectedUsers, user);
