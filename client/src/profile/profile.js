@@ -13,7 +13,8 @@ import {
   INITIAL_POSTS,
   MESSAGE_SENT
 } from '../events.js';
-const socketUrl = 'http://localhost:3001/';
+//const socketUrl = 'http://localhost:3001/';
+const socketUrl = io();
 class Profile extends React.Component {
   constructor(props) {
     super(props);
@@ -33,11 +34,11 @@ class Profile extends React.Component {
       globalposts: [],
       socket: null
     };
-    io(socketUrl).on(MESSAGE_SENT, data => {
+    socketUrl.on(MESSAGE_SENT, data => {
       console.log('message sent');
       return this.handleMessageSent([data]);
     });
-    io(socketUrl).on('connectedusers', data => {
+    socketUrl.on('connectedusers', data => {
       console.log('connectedusers:', data);
     });
   }
