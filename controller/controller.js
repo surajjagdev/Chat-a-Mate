@@ -317,7 +317,7 @@ router.get(
   }
 );
 //================================Intial Posts=================================================================//
-router.get('/api/user/intialposts', authenticationMiddleware(), (req, res) => {
+router.get('/api/user/allposts', authenticationMiddleware(), (req, res) => {
   db.Post.findAll({
     include: [{ model: db.PostComment }],
     where: {
@@ -325,7 +325,8 @@ router.get('/api/user/intialposts', authenticationMiddleware(), (req, res) => {
       user_closed: false,
       deleted: false
     },
-    limit: 10
+    limit: 10,
+    order: [['createdAt', 'DESC']]
   })
     .then(found => {
       //

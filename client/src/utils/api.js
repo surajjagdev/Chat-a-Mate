@@ -49,6 +49,6 @@ export default {
     });
   },
   intialPosts: () => {
-    return axios.get('/api/user/intialposts');
+    return axios.get('/api/user/allposts');
   }
 };
