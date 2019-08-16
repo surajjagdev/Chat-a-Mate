@@ -210,9 +210,9 @@ body {
     display: none;
   }
   .signIn {
-    /*width: 55px;*/
+    width: 55px;
     top: 16px;
-    /*margin-left: 17px*/
+    margin-left: 17px;
   }
   .userName {
     width: 90px;
