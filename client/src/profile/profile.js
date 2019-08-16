@@ -202,10 +202,6 @@ class Profile extends React.Component {
           width={this.state.width}
           logout={this.logout}
         />
-        <Link to="/test">
-          Test
-          {auth.isAuthenticated()}
-        </Link>
         {this.state.sideDrawerOpen && this.state.width <= 610 ? (
           <MobileMenuLinks
             sideDrawerOpen={this.state.sideDrawerOpen}
