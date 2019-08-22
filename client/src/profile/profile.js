@@ -32,7 +32,9 @@ class Profile extends React.Component {
       status: '',
       showPostsPublic: true,
       globalposts: [],
-      socket: null
+      socket: null,
+      loadingPosts: false,
+      offset: 0
     };
     socketUrl.on(MESSAGE_SENT, data => {
       console.log('message sent');
@@ -45,6 +47,7 @@ class Profile extends React.Component {
   componentDidMount() {
     this.handleIntialPosts();
     window.addEventListener('resize', this.handleWindowSizeChange);
+    window.addEventListener('scroll', this.onScroll, true);
     const details = () => {
       setTimeout(() => {
         if (auth.firstName !== 'PlaceHolder')
@@ -69,6 +72,7 @@ class Profile extends React.Component {
   }
   componentWillUnmount() {
     window.removeEventListener('resize', this.handleWindowSizeChange);
+    window.removeEventListener('scroll', this.onScroll);
   }
   handleInput = e => {
     e.preventDefault();
@@ -111,6 +115,47 @@ class Profile extends React.Component {
       );
     }
   };
+  onScroll = () => {
+    console.log('on scroll');
+    if (
+      window.innerHeight + document.documentElement.scrollTop ===
+      document.documentElement.offsetHeight
+    ) {
+      this.nextPosts();
+    }
+  };
+  nextPosts = () => {
+    console.log('nextPosts');
+    const that = this;
+    this.setState({ loadingPosts: true }, () => {
+      nextPages();
+    });
+    function nextPages() {
+      API.intialPosts({ offset: that.state.offset }).then(data => {
+        if (data.data.success === true) {
+          data.data.posts.map(post => {
+            return that.setState(
+              {
+                globalposts: [...that.state.globalposts, post],
+                offset: parseInt(that.state.offset, 10) + 1,
+                loadingPosts: !that.state.loadingPosts
+              },
+              () => {
+                console.log(
+                  'length of global posts: ',
+                  that.state.globalposts.length,
+                  'offset: ',
+                  that.state.offset
+                );
+              }
+            );
+          });
+        } else {
+          return;
+        }
+      });
+    }
+  };
   logout = e => {
     e.preventDefault();
     auth.logout(() => {
@@ -127,7 +172,7 @@ class Profile extends React.Component {
     });
   };
   handleIntialPosts = () => {
-    API.intialPosts().then(data => {
+    API.intialPosts({ offset: this.state.offset }).then(data => {
       return this.handleGlobalPosts([data.data]);
     });
   };
@@ -164,33 +209,47 @@ class Profile extends React.Component {
     });
   };
   setUser = user => {
-    //reference point of this
-    const that = this;
     const { socket } = this.state;
     socket.emit(USER_CONNECTED, user);
   };
   handleMessageSent = async data => {
+    console.log('message seng');
     data.map(posts => {
       if (data[0].success === true) {
-        this.setState({
-          globalposts: [posts.posts, ...this.state.globalposts],
-          status: ''
-        });
+        this.setState(
+          {
+            globalposts: [posts.posts, ...this.state.globalposts],
+            status: '',
+            offset: parseInt(this.state.offset, 10) + 1
+          },
+          () => {
+            console.log('offset:', this.state.offset);
+          }
+        );
       }
     });
   };
   handleGlobalPosts = async data => {
     const { globalposts } = this.state;
-    if (globalposts.length === 0) {
-      data.map(posts => {
-        if (posts.success === true) {
-          this.setState({
+    console.log(globalposts);
+    //if (globalposts.length === 0) {
+    data.map(posts => {
+      if (posts.success === true) {
+        this.setState(
+          {
             globalposts: posts.posts,
             ...this.state.globalposts
-          });
-        }
-      });
-    }
+          },
+          () => {
+            let globalpostsLength = this.state.globalposts.length;
+            this.setState({ offset: globalpostsLength }, () => {
+              console.log('offset: ', this.state.offset);
+            });
+          }
+        );
+      }
+    });
+    // }
   };
   render() {
     return (
@@ -212,6 +271,14 @@ class Profile extends React.Component {
             logout={this.logout}
           />
         ) : null}
+        <button
+          style={{ width: '100px', height: '100px', backgroundColor: 'red' }}
+          onClick={() => {
+            this.nextPosts();
+          }}
+        >
+          C
+        </button>
         <Main
           firstName={this.state.firstName}
           lastName={this.state.lastName}

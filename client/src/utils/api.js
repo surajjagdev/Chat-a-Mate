@@ -48,7 +48,11 @@ export default {
       }
     });
   },
-  intialPosts: () => {
-    return axios.get('/api/user/allposts');
+  intialPosts: data => {
+    return axios.get('/api/user/allposts', {
+      params: {
+        offset: data.offset
+      }
+    });
   }
 };

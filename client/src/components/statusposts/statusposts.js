@@ -30,7 +30,6 @@ function differenceInDates(a, b) {
   }
 }
 const StatusPost = props => {
-  console.log(props);
   return (
     <div
       style={{

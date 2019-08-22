@@ -318,6 +318,8 @@ router.get(
 );
 //================================Intial Posts=================================================================//
 router.get('/api/user/allposts', authenticationMiddleware(), (req, res) => {
+  let offSetQueryString = req.query.offset;
+  let offset = parseInt(offSetQueryString, 10);
   db.Post.findAll({
     include: [{ model: db.PostComment }],
     where: {
@@ -326,6 +328,7 @@ router.get('/api/user/allposts', authenticationMiddleware(), (req, res) => {
       deleted: false
     },
     limit: 10,
+    offset: offset,
     order: [['createdAt', 'DESC']]
   })
     .then(found => {
