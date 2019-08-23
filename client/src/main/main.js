@@ -16,8 +16,8 @@ class Main extends React.Component {
     });
   };
   handleScroll = () => {
-    if (this.scroller) {
-      console.log(this.scroller.scrollTop);
+    if (this.props.hasMoreItems && this.props.count > 0) {
+      return this.props.nextPosts();
     }
   };
   render() {
@@ -32,13 +32,7 @@ class Main extends React.Component {
           likes={this.props.likes}
         />
         <div className="main">
-          <div
-            className="mainstories"
-            onScroll={this.handleScroll}
-            ref={scroller => {
-              this.scroller = scroller;
-            }}
-          >
+          <div className="mainstories">
             <div
               style={{
                 backgroundColor: 'white',
@@ -128,6 +122,18 @@ class Main extends React.Component {
                   );
                 })
               : null}
+            {this.props.count > 0 ? (
+              <div className="loadMore">
+                <button
+                  onClick={() => {
+                    this.handleScroll();
+                  }}
+                  style={{ width: ' -webkit-fill-available' }}
+                >
+                  Load More
+                </button>
+              </div>
+            ) : null}
           </div>
           <div className="mainads" style={{ backgroundColor: 'green' }} />
         </div>

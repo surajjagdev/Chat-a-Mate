@@ -34,7 +34,9 @@ class Profile extends React.Component {
       globalposts: [],
       socket: null,
       loadingPosts: false,
-      offset: 0
+      offset: 0,
+      hasMorePosts: false,
+      totalPostsLeft: 0
     };
     socketUrl.on(MESSAGE_SENT, data => {
       console.log('message sent');
@@ -115,25 +117,38 @@ class Profile extends React.Component {
   };
   nextPosts = () => {
     const that = this;
-    this.setState({ loadingPosts: true }, () => {
-      nextPages();
-    });
+    if (this.state.loadingPosts === false) {
+      this.setState({ loadingPosts: true }, () => {
+        if (this.state.count > 0) {
+          nextPages();
+        } else {
+          console.log(this.state.globalposts);
+        }
+      });
+    }
     function nextPages() {
-      API.intialPosts({ offset: that.state.offset }).then(data => {
+      let offSetNumber = that.state.offset;
+      API.intialPosts({ offset: offSetNumber }).then(data => {
         if (data.data.success === true) {
           data.data.posts.map(post => {
             return that.setState(
               {
                 globalposts: [...that.state.globalposts, post],
                 offset: parseInt(that.state.offset, 10) + 1,
-                loadingPosts: !that.state.loadingPosts
+                count: parseInt(that.state.count, 10) - 1,
+                hasMorePosts: that.state.count <= 0 ? false : true,
+                loadingPosts: false
               },
               () => {
                 console.log(
                   'length of global posts: ',
                   that.state.globalposts.length,
                   'offset: ',
-                  that.state.offset
+                  that.state.offset,
+                  ' count: ',
+                  that.state.count,
+                  ' has more: ',
+                  that.state.hasMorePosts
                 );
               }
             );
@@ -230,9 +245,24 @@ class Profile extends React.Component {
           },
           () => {
             let globalpostsLength = this.state.globalposts.length;
-            this.setState({ offset: globalpostsLength }, () => {
-              console.log('offset: ', this.state.offset);
-            });
+            let postsLeft = posts.count - globalpostsLength;
+            this.setState(
+              {
+                offset: globalpostsLength,
+                count: postsLeft,
+                hasMorePosts: postsLeft > 0 ? true : false
+              },
+              () => {
+                console.log(
+                  'offset: ',
+                  this.state.offset,
+                  'count: ',
+                  this.state.count,
+                  ' has more posts: ',
+                  this.state.hasMorePosts
+                );
+              }
+            );
           }
         );
       }
@@ -285,6 +315,8 @@ class Profile extends React.Component {
           handleGlobalPosts={this.handleGlobalPosts}
           globalposts={this.state.globalposts}
           nextPosts={this.nextPosts}
+          hasMoreItems={this.state.hasMorePosts}
+          count={this.state.count}
         />
       </div>
     );

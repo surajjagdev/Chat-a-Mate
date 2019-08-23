@@ -320,7 +320,7 @@ router.get(
 router.get('/api/user/allposts', authenticationMiddleware(), (req, res) => {
   let offSetQueryString = req.query.offset;
   let offset = parseInt(offSetQueryString, 10);
-  db.Post.findAll({
+  db.Post.findAndCountAll({
     include: [{ model: db.PostComment }],
     where: {
       public: true,
@@ -332,8 +332,7 @@ router.get('/api/user/allposts', authenticationMiddleware(), (req, res) => {
     order: [['createdAt', 'DESC']]
   })
     .then(found => {
-      //
-      const postsObject = found.map(posts => {
+      const postsObject = found.rows.map(posts => {
         return Object.assign(
           {},
           {
@@ -362,7 +361,11 @@ router.get('/api/user/allposts', authenticationMiddleware(), (req, res) => {
         );
       });
       //
-      return res.json({ success: true, posts: postsObject });
+      return res.json({
+        success: true,
+        count: found.count,
+        posts: postsObject
+      });
     })
     .catch(error => {
       return res.json({ success: false, error: true, errors: error });
