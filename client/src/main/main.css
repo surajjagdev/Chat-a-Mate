@@ -19,7 +19,11 @@
   height: 100%;
   width: 60%;
   margin-left: 5px;
-  overflow-y: auto;
+  overflow-y: scroll;
+}
+::-webkit-scrollbar {
+  width: 0px; /* Remove scrollbar space */
+  background: transparent; /* Optional: just make scrollbar invisible */
 }
 .mainads {
   height: 100%;

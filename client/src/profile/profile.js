@@ -127,6 +127,7 @@ class Profile extends React.Component {
       });
     }
     function nextPages() {
+      console.log('offset: ', that.state.offset);
       let offSetNumber = that.state.offset;
       API.intialPosts({ offset: offSetNumber }).then(data => {
         if (data.data.success === true) {
@@ -234,40 +235,47 @@ class Profile extends React.Component {
   };
   handleGlobalPosts = async data => {
     const { globalposts } = this.state;
-    console.log(globalposts);
     //if (globalposts.length === 0) {
-    data.map(posts => {
-      if (posts.success === true) {
-        this.setState(
-          {
-            globalposts: posts.posts,
-            ...this.state.globalposts
-          },
-          () => {
-            let globalpostsLength = this.state.globalposts.length;
-            let postsLeft = posts.count - globalpostsLength;
-            this.setState(
-              {
-                offset: globalpostsLength,
-                count: postsLeft,
-                hasMorePosts: postsLeft > 0 ? true : false
-              },
-              () => {
-                console.log(
-                  'offset: ',
-                  this.state.offset,
-                  'count: ',
-                  this.state.count,
-                  ' has more posts: ',
-                  this.state.hasMorePosts
-                );
-              }
-            );
-          }
-        );
-      }
-    });
-    // }
+    if (data[0].success === true) {
+      let friendNotPublicPosts = data[0].friendNotPublicPosts;
+      friendNotPublicPosts.forEach(function(item) {
+        data[0].posts.push(item);
+      });
+      data.map(posts => {
+        if (posts.success === true) {
+          this.setState(
+            {
+              globalposts: posts.posts,
+              ...this.state.globalposts
+            },
+            () => {
+              let globalpostsLength = this.state.globalposts.length;
+              console.log(globalpostsLength);
+              let postsLeft = posts.count - globalpostsLength;
+              this.setState(
+                {
+                  offset: globalpostsLength + posts.ommited,
+                  count: postsLeft,
+                  hasMorePosts: postsLeft > 0 ? true : false
+                },
+                () => {
+                  console.log(
+                    'offset: ',
+                    this.state.offset,
+                    'count: ',
+                    this.state.count,
+                    ' has more posts: ',
+                    this.state.hasMorePosts
+                  );
+                }
+              );
+            }
+          );
+        }
+      });
+    } else {
+      return;
+    }
   };
   render() {
     return (
@@ -289,14 +297,6 @@ class Profile extends React.Component {
             logout={this.logout}
           />
         ) : null}
-        <button
-          style={{ width: '100px', height: '100px', backgroundColor: 'red' }}
-          onClick={() => {
-            this.nextPosts();
-          }}
-        >
-          C
-        </button>
         <Main
           firstName={this.state.firstName}
           lastName={this.state.lastName}

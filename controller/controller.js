@@ -82,7 +82,8 @@ router.post(
               image: 'https://www.gstatic.com/webp/gallery/4.sm.jpg',
               number_posts: 0,
               number_likes: 0,
-              password: hash
+              password: hash,
+              friendsArray: ','
             })
               .then(created => {
                 const userId = created.id;
@@ -323,7 +324,6 @@ router.get('/api/user/allposts', authenticationMiddleware(), (req, res) => {
   db.Post.findAndCountAll({
     include: [{ model: db.PostComment }],
     where: {
-      public: true,
       user_closed: false,
       deleted: false
     },
@@ -332,40 +332,106 @@ router.get('/api/user/allposts', authenticationMiddleware(), (req, res) => {
     order: [['createdAt', 'DESC']]
   })
     .then(found => {
-      const postsObject = found.rows.map(posts => {
-        return Object.assign(
-          {},
-          {
-            postId: posts.id,
-            body: posts.body,
-            added_by: posts.added_by,
-            user_to: posts.user_to,
-            user_closed: posts.user_closed,
-            deleted: posts.deleted,
-            public: posts.public,
-            likes: posts.likes,
-            createdAt: posts.createdAt,
-            comments: posts.PostComments.map(comment => {
-              //tidy up the comment data
+      db.User.findOne({ where: { id: req.session.passport.user } })
+        .then(friends => {
+          let friendArrayCount = friends.friendsArray.length - 1;
+          let friendArraySpliced = friends.friendsArray;
+          let friendArray = friendArraySpliced
+            .slice(1, friendArrayCount)
+            .split(',');
+          console.log('friendArray: ', friendArray);
+          let friendNotPublicPostsArray = [];
+          let countToAddFriend = 0;
+          let ommited = 0;
+          const postsObject = found.rows.map(posts => {
+            let friendNotPublicPosts;
+            if (posts.public === false) {
+              if (
+                friendArray.includes(
+                  posts.added_by
+                ) &&
+                post.added_by === req.passport.user
+              ) {
+                countToAddFriend += 1;
+                friendNotPublicPosts = Object.assign(
+                  {},
+                  {
+                    postId: posts.id,
+                    body: posts.body,
+                    added_by: posts.added_by,
+                    user_to: posts.user_to,
+                    user_closed: posts.user_closed,
+                    deleted: posts.deleted,
+                    public: posts.public,
+                    likes: posts.likes,
+                    createdAt: posts.createdAt,
+                    comments: posts.PostComments.map(comment => {
+                      //tidy up the comment data
+                      return Object.assign(
+                        {},
+                        {
+                          comment_id: comment.id,
+                          postBody: comment.post_body,
+                          commenter: comment.post_by,
+                          postId: comment.post_id
+                        }
+                      );
+                    })
+                  }
+                );
+                friendNotPublicPostsArray.push(friendNotPublicPosts);
+                console.log(friendNotPublicPostsArray);
+              } else {
+                ommited += 1;
+              }
+            }
+            if (posts.public === true) {
               return Object.assign(
                 {},
                 {
-                  comment_id: comment.id,
-                  postBody: comment.post_body,
-                  commenter: comment.post_by,
-                  postId: comment.post_id
+                  postId: posts.id,
+                  body: posts.body,
+                  added_by: posts.added_by,
+                  user_to: posts.user_to,
+                  user_closed: posts.user_closed,
+                  deleted: posts.deleted,
+                  public: posts.public,
+                  likes: posts.likes,
+                  createdAt: posts.createdAt,
+                  comments: posts.PostComments.map(comment => {
+                    //tidy up the comment data
+                    return Object.assign(
+                      {},
+                      {
+                        comment_id: comment.id,
+                        postBody: comment.post_body,
+                        commenter: comment.post_by,
+                        postId: comment.post_id
+                      }
+                    );
+                  })
                 }
               );
-            })
-          }
-        );
-      });
-      //
-      return res.json({
-        success: true,
-        count: found.count,
-        posts: postsObject
-      });
+            }
+          });
+          let filteredArray = postsObject.filter(function(el) {
+            return el != null;
+          });
+          //
+
+          return res.json({
+            success: true,
+            count: found.count,
+            ommited: ommited,
+            postsByFriendsIncluded: countToAddFriend,
+            friendArray: friendArray,
+            posts: filteredArray,
+            friendNotPublicPosts: friendNotPublicPostsArray
+          });
+        })
+        .catch(error => {
+          return res.json({ success: false, error: true, errors: error });
+        });
     })
     .catch(error => {
       return res.json({ success: false, error: true, errors: error });
@@ -592,6 +658,7 @@ const newsocketmanager = function(socket) {
     }
   );
 };
+
 module.exports = {
   router: router,
   newsocketmanager: newsocketmanager
