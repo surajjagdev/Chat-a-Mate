@@ -15,6 +15,11 @@ class Main extends React.Component {
       console.log(data);
     });
   };
+  handleScroll = () => {
+    if (this.scroller) {
+      console.log(this.scroller.scrollTop);
+    }
+  };
   render() {
     return !this.props.sideDrawerOpen ? (
       <div className="mainwrapper">
@@ -27,7 +32,13 @@ class Main extends React.Component {
           likes={this.props.likes}
         />
         <div className="main">
-          <div className="mainstories">
+          <div
+            className="mainstories"
+            onScroll={this.handleScroll}
+            ref={scroller => {
+              this.scroller = scroller;
+            }}
+          >
             <div
               style={{
                 backgroundColor: 'white',

@@ -47,7 +47,6 @@ class Profile extends React.Component {
   componentDidMount() {
     this.handleIntialPosts();
     window.addEventListener('resize', this.handleWindowSizeChange);
-    window.addEventListener('scroll', this.onScroll, true);
     const details = () => {
       setTimeout(() => {
         if (auth.firstName !== 'PlaceHolder')
@@ -72,7 +71,6 @@ class Profile extends React.Component {
   }
   componentWillUnmount() {
     window.removeEventListener('resize', this.handleWindowSizeChange);
-    window.removeEventListener('scroll', this.onScroll);
   }
   handleInput = e => {
     e.preventDefault();
@@ -115,17 +113,7 @@ class Profile extends React.Component {
       );
     }
   };
-  onScroll = () => {
-    console.log('on scroll');
-    if (
-      window.innerHeight + document.documentElement.scrollTop ===
-      document.documentElement.offsetHeight
-    ) {
-      this.nextPosts();
-    }
-  };
   nextPosts = () => {
-    console.log('nextPosts');
     const that = this;
     this.setState({ loadingPosts: true }, () => {
       nextPages();
@@ -296,6 +284,7 @@ class Profile extends React.Component {
           socket={this.state.socket}
           handleGlobalPosts={this.handleGlobalPosts}
           globalposts={this.state.globalposts}
+          nextPosts={this.nextPosts}
         />
       </div>
     );
